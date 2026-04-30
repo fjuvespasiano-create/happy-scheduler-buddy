@@ -60,6 +60,7 @@ const STORAGE_KEYS = {
 };
 
 function loadFromStorage<T>(key: string, defaultValue: T): T {
+  if (typeof window === "undefined") return defaultValue;
   try {
     const stored = localStorage.getItem(key);
     if (stored) {
@@ -80,6 +81,7 @@ function loadFromStorage<T>(key: string, defaultValue: T): T {
 }
 
 function saveToStorage<T>(key: string, value: T): void {
+  if (typeof window === "undefined") return;
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch (e) {
@@ -165,13 +167,16 @@ export function useAppState() {
 
   useEffect(() => {
     saveToStorage(STORAGE_KEYS.THEME, isDarkMode);
-    // Identidade visual da marca é sempre dark — mantemos a classe sempre ativa
-    document.documentElement.classList.add('dark');
+    if (typeof document !== "undefined") {
+      document.documentElement.classList.add('dark');
+    }
   }, [isDarkMode]);
 
   // Garante o tema dark no mount
   useEffect(() => {
-    document.documentElement.classList.add('dark');
+    if (typeof document !== "undefined") {
+      document.documentElement.classList.add('dark');
+    }
   }, []);
 
   // ==================== SALES ACTIONS ====================

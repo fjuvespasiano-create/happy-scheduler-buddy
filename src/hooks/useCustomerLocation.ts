@@ -46,6 +46,7 @@ async function reverseGeocode(latitude: number, longitude: number) {
 }
 
 function loadSavedLocation() {
+  if (typeof window === "undefined") return null;
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved ? (JSON.parse(saved) as CustomerLocation) : null;
