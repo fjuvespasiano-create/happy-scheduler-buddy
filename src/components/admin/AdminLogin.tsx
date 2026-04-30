@@ -24,7 +24,7 @@ export function AdminLogin({ onBack, onSuccess }: AdminLoginProps) {
       return;
     }
     if (user.trim() === ADMIN_USER && pass === ADMIN_PASS) {
-      sessionStorage.setItem(SESSION_KEY, "1");
+      try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* noop */ }
       toast.success("Bem-vindo, administrador");
       onSuccess();
     } else {
@@ -114,9 +114,19 @@ export function AdminLogin({ onBack, onSuccess }: AdminLoginProps) {
 }
 
 export function isAdminAuthenticated(): boolean {
-  return sessionStorage.getItem(SESSION_KEY) === "1";
+  if (typeof window === "undefined") return false;
+  try {
+    return sessionStorage.getItem(SESSION_KEY) === "1";
+  } catch {
+    return false;
+  }
 }
 
 export function adminLogout() {
-  sessionStorage.removeItem(SESSION_KEY);
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.removeItem(SESSION_KEY);
+  } catch {
+    /* noop */
+  }
 }
