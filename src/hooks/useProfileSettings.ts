@@ -189,6 +189,7 @@ const DEFAULT_SECURITY: SecuritySettings = {
 };
 
 function loadFromStorage<T>(key: string, defaultValue: T): T {
+  if (typeof window === "undefined") return defaultValue;
   try {
     const stored = localStorage.getItem(key);
     if (!stored) return defaultValue;
@@ -204,6 +205,7 @@ function loadFromStorage<T>(key: string, defaultValue: T): T {
 }
 
 function saveToStorage<T>(key: string, value: T): void {
+  if (typeof window === "undefined") return;
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
