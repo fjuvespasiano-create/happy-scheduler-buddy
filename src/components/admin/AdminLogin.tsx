@@ -191,12 +191,4 @@ export function AdminLogin({ onBack, onSuccess }: AdminLoginProps) {
   );
 }
 
-// Compat com chamadas antigas (Index.tsx)
-export function isAdminAuthenticated(): boolean {
-  // Mantido pra não quebrar imports — agora a verdade vive no useAuth.
-  return false;
-}
 
-export function adminLogout() {
-  // Mantido pra compat — substituído por useAuth().signOut()
-}
