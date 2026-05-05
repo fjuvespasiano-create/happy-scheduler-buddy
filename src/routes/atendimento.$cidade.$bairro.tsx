@@ -1,6 +1,7 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { LocalSeoPage } from "@/components/local/LocalSeoPage";
 import { findBairro } from "@/data/locations";
+import { buildLocalFaq } from "@/data/localFaq";
 import { COMPANY_INFO } from "@/config/whatsappTemplate";
 
 export const Route = createFileRoute("/atendimento/$cidade/$bairro")({
@@ -51,6 +52,18 @@ export const Route = createFileRoute("/atendimento/$cidade/$bairro")({
               ratingValue: "4.9",
               reviewCount: "187",
             },
+          }),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: buildLocalFaq(cidade, bairro).map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
           }),
         },
       ],
