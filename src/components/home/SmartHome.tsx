@@ -1,6 +1,8 @@
 import { Sparkles, Sofa, Bed, Car, CarFront, HardHat, Armchair, ArrowRight, Calendar, Clock, ShieldCheck, Star, Phone, MapPin, Baby, BedDouble, Utensils, LayoutDashboard } from "lucide-react";
 import type { CustomerLocation } from "@/hooks/useCustomerLocation";
 import { PlansHighlight } from "@/components/plans/PlansHighlight";
+import logoImg from "@/assets/logo.png";
+import mascotImg from "@/assets/mascot.png";
 
 interface SmartHomeProps {
   onStartBooking: (serviceId?: string) => void;
