@@ -197,6 +197,28 @@ export function LocalSeoPage({ cidade, bairro }: LocalSeoPageProps) {
         </section>
       )}
 
+      {/* FAQ SEO local */}
+      <section className="px-4 mt-8">
+        <div className="rounded-3xl bg-card border border-border p-5">
+          <h3 className="font-bold text-foreground mb-3 flex items-center gap-2">
+            <HelpCircle className="h-5 w-5 text-primary" />
+            Perguntas frequentes {bairro ? `no ${bairro.nome}` : `em ${cidade.nome}`}
+          </h3>
+          <Accordion type="single" collapsible className="w-full">
+            {buildLocalFaq(cidade, bairro).map((item, i) => (
+              <AccordionItem key={i} value={`faq-${i}`}>
+                <AccordionTrigger className="text-sm font-semibold text-foreground">
+                  {item.q}
+                </AccordionTrigger>
+                <AccordionContent className="text-sm text-muted-foreground">
+                  {item.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
+
       {/* CTA final */}
       <section className="px-4 mt-8">
         <div className="rounded-3xl bg-primary/5 border border-primary/20 p-5 text-center">
