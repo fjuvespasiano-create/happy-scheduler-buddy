@@ -41,8 +41,9 @@ export async function registerPWA() {
   }
 
   try {
-    const { registerSW } = await import("virtual:pwa-register");
-    registerSW({ immediate: true });
+    // PWA registration disabled in this build (no virtual:pwa-register plugin configured)
+    // const { registerSW } = await import("virtual:pwa-register");
+    // registerSW({ immediate: true });
   } catch (err) {
     console.warn("[PWA] register failed", err);
   }
