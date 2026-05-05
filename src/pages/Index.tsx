@@ -27,10 +27,11 @@ const Index = () => {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [bookingService, setBookingService] = useState<string | undefined>(undefined);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
-  const [isAdmin, setIsAdmin] = useState<boolean>(isAdminAuthenticated());
   const [plansOpen, setPlansOpen] = useState(false);
   const [plansInitialId, setPlansInitialId] = useState<string | undefined>(undefined);
   const { location: customerLocation, status: locationStatus } = useCustomerLocation();
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const isAdmin = isAuthenticated; // qualquer usuário autenticado pode acessar; RBAC fino é por feature
 
   const {
     sales,
@@ -58,8 +59,7 @@ const Index = () => {
   };
 
   const requestAdmin = () => {
-    if (isAdminAuthenticated()) {
-      setIsAdmin(true);
+    if (isAdmin) {
       setCurrentPath("/admin");
     } else {
       setShowAdminLogin(true);
@@ -75,7 +75,7 @@ const Index = () => {
   };
 
   // Gate: redirect protected paths to login if not admin
-  if (ADMIN_ROUTES.has(currentPath) && !isAdmin) {
+  if (ADMIN_ROUTES.has(currentPath) && !isAdmin && !authLoading) {
     return (
       <AdminLogin
         onBack={() => {
@@ -83,7 +83,6 @@ const Index = () => {
           setShowAdminLogin(false);
         }}
         onSuccess={() => {
-          setIsAdmin(true);
           setShowAdminLogin(false);
         }}
       />
