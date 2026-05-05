@@ -2,9 +2,18 @@ import { useState } from "react";
 import { ArrowLeft, Lock, User, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
-const ADMIN_USER = "proclean@2026";
-const ADMIN_PASS = "suíça@206";
+// Credenciais ofuscadas como hash SHA-256 (não expõem usuário/senha em texto puro no bundle)
+const ADMIN_USER_HASH = "15093185b5e617a71eb4e50c8a922f86130f97cd3d708b96fd0032a83c003279";
+const ADMIN_PASS_HASH = "6a3f249b9d8330e75aaaba71b9faeb897dfa7c7db19a2dcdfc39a8dced693367";
 const SESSION_KEY = "cleanpro_admin_session_v1";
+
+async function sha256(text: string): Promise<string> {
+  const buf = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest("SHA-256", buf);
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
 interface AdminLoginProps {
   onBack: () => void;
@@ -17,13 +26,14 @@ export function AdminLogin({ onBack, onSuccess }: AdminLoginProps) {
   const [showPass, setShowPass] = useState(false);
   const [attempts, setAttempts] = useState(0);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (attempts >= 5) {
       toast.error("Muitas tentativas", { description: "Aguarde alguns minutos antes de tentar novamente." });
       return;
     }
-    if (user.trim() === ADMIN_USER && pass === ADMIN_PASS) {
+    const [uHash, pHash] = await Promise.all([sha256(user.trim()), sha256(pass)]);
+    if (uHash === ADMIN_USER_HASH && pHash === ADMIN_PASS_HASH) {
       try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* noop */ }
       toast.success("Bem-vindo, administrador");
       onSuccess();
