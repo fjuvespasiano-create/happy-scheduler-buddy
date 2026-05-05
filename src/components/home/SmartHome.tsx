@@ -39,13 +39,7 @@ export function SmartHome({ onStartBooking, customerLocation, locationStatus, on
       <header className="px-5 pt-8 pb-6 safe-top">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-salon">
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground leading-none">Auto Limpeza Pro</p>
-              <p className="font-bold text-foreground leading-tight">Agendamento</p>
-            </div>
+            <img src={logoImg} alt="Auto Limpeza Pro" width={160} height={48} className="h-12 w-auto object-contain" />
           </div>
           <a
             href="https://wa.me/5531980252882?text=Ol%C3%A1,%20gostaria%20de%20agendar%20uma%20higieniza%C3%A7%C3%A3o."
