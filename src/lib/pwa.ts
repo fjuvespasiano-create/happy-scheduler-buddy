@@ -127,22 +127,37 @@ export async function ensurePushSubscription(): Promise<PushSubscription | null>
   if (!reg) return null;
 
   const existing = await reg.pushManager.getSubscription();
-  if (existing) return existing;
+  const { VAPID_PUBLIC_KEY } = await import("./vapid");
+  const { saveSubscription } = await import("@/server/push.functions");
 
-  const vapidKey = (import.meta as any).env?.VITE_VAPID_PUBLIC_KEY as string | undefined;
-  if (!vapidKey) return null;
+  const sub =
+    existing ??
+    (await reg.pushManager
+      .subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY).buffer as ArrayBuffer,
+      })
+      .catch((err) => {
+        console.warn("[PWA] push subscribe failed", err);
+        return null;
+      }));
+
+  if (!sub) return null;
 
   try {
-    const sub = await reg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(vapidKey).buffer as ArrayBuffer,
+    const json = sub.toJSON();
+    await saveSubscription({
+      data: {
+        endpoint: sub.endpoint,
+        p256dh: json.keys?.p256dh ?? "",
+        auth: json.keys?.auth ?? "",
+        user_agent: navigator.userAgent.slice(0, 500),
+      },
     });
-    // TODO: enviar `sub` ao backend para armazenar e disparar push
-    return sub;
   } catch (err) {
-    console.warn("[PWA] push subscribe failed", err);
-    return null;
+    console.warn("[PWA] save subscription failed", err);
   }
+  return sub;
 }
 
 // Lembrete local agendado via setTimeout (válido enquanto a aba viver).
