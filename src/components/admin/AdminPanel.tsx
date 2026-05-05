@@ -1,5 +1,21 @@
-import { ArrowLeft, Calendar, Wallet, ShoppingBag, BarChart3, User, LogOut, ShieldCheck } from "lucide-react";
+import { useMemo, useState } from "react";
+import {
+  Calendar,
+  Wallet,
+  ShoppingBag,
+  BarChart3,
+  User,
+  LogOut,
+  Search,
+  Plus,
+  TrendingUp,
+  Clock,
+  AlertCircle,
+  CheckCircle2,
+  ChevronRight,
+} from "lucide-react";
 import { adminLogout } from "./AdminLogin";
+import { AdminLayout } from "./AdminLayout";
 import { toast } from "sonner";
 
 interface AdminPanelProps {
@@ -13,14 +29,30 @@ interface AdminPanelProps {
   };
 }
 
+const MODULES = [
+  { icon: Calendar, label: "Agenda", desc: "Agendamentos e horários", path: "/agenda", tone: "bg-primary/10 text-primary" },
+  { icon: Wallet, label: "Caixa", desc: "Abertura e fechamento", path: "/caixa", tone: "bg-emerald-500/10 text-emerald-600" },
+  { icon: ShoppingBag, label: "Vendas", desc: "Histórico de vendas", path: "/vendas", tone: "bg-amber-500/10 text-amber-600" },
+  { icon: BarChart3, label: "Finanças", desc: "Receitas e despesas", path: "/financas", tone: "bg-violet-500/10 text-violet-600" },
+  { icon: User, label: "Empresa", desc: "Dados, equipe e ajustes", path: "/perfil", tone: "bg-cyan-500/10 text-cyan-600" },
+];
+
+const QUICK_ACTIONS = [
+  { label: "Novo agendamento", icon: Calendar, path: "/agenda?new=1" },
+  { label: "Nova venda", icon: Plus, path: "/vendas?new=1" },
+  { label: "Abrir caixa", icon: Wallet, path: "/caixa" },
+];
+
 export function AdminPanel({ onBack, onNavigate, onLogout, stats }: AdminPanelProps) {
-  const modules = [
-    { icon: Calendar, label: "Agenda", desc: "Agendamentos e horários", path: "/agenda", color: "from-primary to-primary-glow" },
-    { icon: Wallet, label: "Caixa", desc: "Abertura, fechamento e movimentos", path: "/caixa", color: "from-success to-emerald-400" },
-    { icon: ShoppingBag, label: "Histórico de vendas", desc: "Vendas realizadas", path: "/vendas", color: "from-amber-500 to-orange-400" },
-    { icon: BarChart3, label: "Finanças", desc: "Receitas e despesas", path: "/financas", color: "from-violet-500 to-fuchsia-500" },
-    { icon: User, label: "Perfil da empresa", desc: "Dados, equipe e configurações", path: "/perfil", color: "from-cyan-500 to-blue-500" },
-  ];
+  const [query, setQuery] = useState("");
+
+  const filteredModules = useMemo(() => {
+    if (!query.trim()) return MODULES;
+    const q = query.toLowerCase();
+    return MODULES.filter(
+      (m) => m.label.toLowerCase().includes(q) || m.desc.toLowerCase().includes(q),
+    );
+  }, [query]);
 
   const handleLogout = () => {
     adminLogout();
@@ -28,71 +60,164 @@ export function AdminPanel({ onBack, onNavigate, onLogout, stats }: AdminPanelPr
     onLogout();
   };
 
+  const kpis = [
+    {
+      label: "Agendamentos",
+      value: stats.totalAppointments,
+      icon: Calendar,
+      tone: "text-primary",
+      bg: "bg-primary/5",
+    },
+    {
+      label: "Pendentes",
+      value: stats.pendingAppointments,
+      icon: AlertCircle,
+      tone: "text-amber-600",
+      bg: "bg-amber-500/5",
+    },
+    {
+      label: "Vendas hoje",
+      value: stats.todaySales,
+      icon: TrendingUp,
+      tone: "text-emerald-600",
+      bg: "bg-emerald-500/5",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-lg border-b border-border safe-top">
-        <div className="flex items-center gap-3 px-4 py-3">
-          <button
-            onClick={onBack}
-            className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center hover:bg-muted/70 transition"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <div className="flex-1 flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-primary" />
-            <h1 className="font-bold text-base text-foreground">Painel administrativo</h1>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center hover:bg-destructive/10 hover:text-destructive transition"
-            aria-label="Sair"
-          >
-            <LogOut className="h-5 w-5" />
-          </button>
-        </div>
-      </header>
-
-      <main className="p-4 space-y-5">
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-2">
-          <div className="rounded-2xl bg-card border border-border p-3 text-center">
-            <p className="text-2xl font-bold text-foreground">{stats.totalAppointments}</p>
-            <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wide">Agendamentos</p>
-          </div>
-          <div className="rounded-2xl bg-card border border-border p-3 text-center">
-            <p className="text-2xl font-bold text-warning">{stats.pendingAppointments}</p>
-            <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wide">Pendentes</p>
-          </div>
-          <div className="rounded-2xl bg-card border border-border p-3 text-center">
-            <p className="text-2xl font-bold text-success">{stats.todaySales}</p>
-            <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wide">Vendas hoje</p>
-          </div>
+    <AdminLayout
+      title="Painel administrativo"
+      subtitle="Controle operacional"
+      onBack={onBack}
+      breadcrumbs={[{ label: "Admin" }]}
+      actions={
+        <button
+          onClick={handleLogout}
+          aria-label="Sair"
+          className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center hover:bg-destructive/10 hover:text-destructive transition"
+        >
+          <LogOut className="h-5 w-5" />
+        </button>
+      }
+    >
+      <div className="p-4 space-y-5">
+        {/* Busca */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Buscar módulo..."
+            className="w-full pl-10 pr-3 py-3 rounded-xl bg-muted border border-transparent focus:border-primary focus:outline-none text-sm"
+          />
         </div>
 
-        {/* Modules */}
-        <div className="space-y-3">
-          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">Módulos</h2>
-          {modules.map((m) => {
-            const Icon = m.icon;
+        {/* KPIs */}
+        <section aria-label="Indicadores" className="grid grid-cols-3 gap-2">
+          {kpis.map((k) => {
+            const Icon = k.icon;
             return (
-              <button
-                key={m.path}
-                onClick={() => onNavigate(m.path)}
-                className="w-full p-4 rounded-2xl bg-card border border-border hover:border-primary/40 transition-all flex items-center gap-4 text-left active:scale-[0.99]"
+              <div
+                key={k.label}
+                className={`rounded-2xl ${k.bg} border border-border p-3`}
               >
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${m.color} flex items-center justify-center shrink-0 shadow-salon`}>
-                  <Icon className="h-7 w-7 text-white" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-foreground">{m.label}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{m.desc}</p>
-                </div>
-                <ArrowLeft className="h-5 w-5 text-muted-foreground rotate-180" />
-              </button>
+                <Icon className={`h-4 w-4 ${k.tone} mb-1`} />
+                <p className="text-xl font-bold text-foreground leading-none">{k.value}</p>
+                <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wide">
+                  {k.label}
+                </p>
+              </div>
             );
           })}
-        </div>
-      </main>
-    </div>
+        </section>
+
+        {/* Ações rápidas */}
+        <section>
+          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-1">
+            Ações rápidas
+          </h2>
+          <div className="grid grid-cols-3 gap-2">
+            {QUICK_ACTIONS.map((a) => {
+              const Icon = a.icon;
+              return (
+                <button
+                  key={a.label}
+                  onClick={() => onNavigate(a.path.split("?")[0])}
+                  className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-card border border-border hover:border-primary/40 active:scale-[0.98] transition-all text-center"
+                >
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <span className="text-[11px] font-semibold text-foreground leading-tight">
+                    {a.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Módulos */}
+        <section>
+          <div className="flex items-center justify-between mb-2 px-1">
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Módulos
+            </h2>
+            <span className="text-[10px] text-muted-foreground">
+              {filteredModules.length} de {MODULES.length}
+            </span>
+          </div>
+          <div className="space-y-2">
+            {filteredModules.map((m) => {
+              const Icon = m.icon;
+              return (
+                <button
+                  key={m.path}
+                  onClick={() => onNavigate(m.path)}
+                  className="w-full p-3.5 rounded-2xl bg-card border border-border hover:border-primary/40 transition-all flex items-center gap-3 text-left active:scale-[0.99]"
+                >
+                  <div className={`w-11 h-11 rounded-xl ${m.tone} flex items-center justify-center shrink-0`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-foreground text-sm">{m.label}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{m.desc}</p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </button>
+              );
+            })}
+            {filteredModules.length === 0 && (
+              <p className="text-center text-xs text-muted-foreground py-6">
+                Nenhum módulo encontrado.
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* Status do sistema */}
+        <section className="rounded-2xl bg-card border border-border p-4">
+          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+            Status
+          </h2>
+          <div className="space-y-2 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2 text-foreground">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                Sistema operacional
+              </span>
+              <span className="text-xs text-muted-foreground">100%</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2 text-foreground">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                Última atividade
+              </span>
+              <span className="text-xs text-muted-foreground">agora</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </AdminLayout>
   );
 }
