@@ -1,8 +1,9 @@
-import { Sparkles, Sofa, Bed, Car, CarFront, HardHat, Armchair, ArrowRight, Calendar, Clock, ShieldCheck, Star, Phone, MapPin, Baby, BedDouble, Utensils, LayoutDashboard } from "lucide-react";
+import { Sparkles, Sofa, Bed, Car, CarFront, HardHat, Armchair, ArrowRight, Calendar, Clock, ShieldCheck, Star, Phone, MapPin, Baby, BedDouble, Utensils, LayoutDashboard, Map } from "lucide-react";
 import type { CustomerLocation } from "@/hooks/useCustomerLocation";
 import { PlansHighlight } from "@/components/plans/PlansHighlight";
-import logoImg from "@/assets/logo.png";
-import mascotImg from "@/assets/mascot.png";
+import { NotificationsBanner } from "@/components/pwa/NotificationsBanner";
+import logoAutoLimpeza from "@/assets/auto-limpeza-pro-logo.jpg";
+import mascote from "@/assets/mascote-auto-limpeza-pro.png";
 
 interface SmartHomeProps {
   onStartBooking: (serviceId?: string) => void;
@@ -10,6 +11,7 @@ interface SmartHomeProps {
   locationStatus: "idle" | "requesting" | "allowed" | "denied" | "unavailable";
   onOpenAdmin?: () => void;
   onOpenPlans?: () => void;
+  onOpenSiteMap?: () => void;
 }
 
 const QUICK_SERVICES = [
@@ -26,7 +28,7 @@ const QUICK_SERVICES = [
   { id: "pos-obra", icon: HardHat, name: "Pós-obra", from: 18 },
 ];
 
-export function SmartHome({ onStartBooking, customerLocation, locationStatus, onOpenAdmin, onOpenPlans }: SmartHomeProps) {
+export function SmartHome({ onStartBooking, customerLocation, locationStatus, onOpenAdmin, onOpenPlans, onOpenSiteMap }: SmartHomeProps) {
   const locationText = customerLocation
     ? `${customerLocation.city ?? "Localização detectada"}${customerLocation.state ? `, ${customerLocation.state}` : ""} • ${customerLocation.distanceKm} km`
     : locationStatus === "requesting"
@@ -39,7 +41,18 @@ export function SmartHome({ onStartBooking, customerLocation, locationStatus, on
       <header className="px-5 pt-8 pb-6 safe-top">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <img src={logoImg} alt="Auto Limpeza Pro" width={160} height={48} className="h-12 w-auto object-contain" />
+            <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center shadow-salon overflow-hidden">
+              <img
+                src={logoAutoLimpeza}
+                alt="Auto Limpeza Pro - Higienização de estofados e estética automotiva"
+                className="w-full h-full object-cover"
+                loading="eager"
+              />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground leading-none">Bem-vindo à</p>
+              <p className="font-bold text-foreground leading-tight">Auto Limpeza Pro</p>
+            </div>
           </div>
           <a
             href="https://wa.me/5531980252882?text=Ol%C3%A1,%20gostaria%20de%20agendar%20uma%20higieniza%C3%A7%C3%A3o."
@@ -52,33 +65,37 @@ export function SmartHome({ onStartBooking, customerLocation, locationStatus, on
           </a>
         </div>
 
-        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-3 py-1.5 mb-4">
-          <ShieldCheck className="h-4 w-4 text-primary" />
-          <span className="text-xs font-semibold text-primary">São José da Lapa, Vespasiano e região</span>
+        {/* Hero com mascote */}
+        <div className="relative mb-5 rounded-3xl bg-gradient-to-br from-primary/15 via-card to-accent/10 border border-primary/20 shadow-salon-lg overflow-hidden p-5 pb-3">
+          <div className="flex items-center gap-3">
+            <div className="flex-1 min-w-0">
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 border border-primary/30 px-2.5 py-1 mb-2">
+                <ShieldCheck className="h-3 w-3 text-primary" />
+                <span className="text-[10px] font-semibold text-primary">SJ Lapa, Vespasiano e região</span>
+              </div>
+              <h1 className="text-2xl font-extrabold text-foreground leading-tight">
+                Higienização <span className="text-gradient">profissional</span> em minutos
+              </h1>
+              <p className="text-xs text-muted-foreground mt-1.5">
+                Estofados, automotiva e pós-obra.
+              </p>
+            </div>
+            <img
+              src={mascote}
+              alt="Mascote Auto Limpeza Pro"
+              className="w-36 h-36 sm:w-40 sm:h-40 object-contain shrink-0 drop-shadow-[0_8px_20px_rgba(14,165,255,0.35)]"
+              loading="eager"
+            />
+          </div>
         </div>
 
-        <div className="flex items-start gap-3">
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-foreground leading-tight">
-              Referência em higienização <span className="text-gradient">agendada em minutos</span>
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              Sofás, colchões, tapetes, automóveis, impermeabilização e pós-obra com orçamento rápido.
-            </p>
-          </div>
-          <img
-            src={mascotImg}
-            alt="Mascote Auto Limpeza Pro"
-            width={120}
-            height={120}
-            className="w-24 h-24 sm:w-28 sm:h-28 object-contain shrink-0 drop-shadow-[0_8px_24px_rgba(14,165,255,0.35)] animate-fade-in-up"
-          />
-        </div>
-        <div className="mt-4 flex items-start gap-2 rounded-2xl bg-card border border-border p-3">
+        <div className="flex items-start gap-2 rounded-2xl bg-card border border-border p-3">
           <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground leading-relaxed">{locationText}</p>
         </div>
       </header>
+
+      <NotificationsBanner />
 
       {/* CTA principal */}
       <section className="px-5">
@@ -165,6 +182,27 @@ export function SmartHome({ onStartBooking, customerLocation, locationStatus, on
           ))}
         </div>
       </section>
+
+      {/* Mapa do site (SEO + atalho) */}
+      {onOpenSiteMap && (
+        <section className="px-5 mt-7">
+          <button
+            onClick={onOpenSiteMap}
+            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-card border border-border hover:border-primary/40 active:scale-[0.98] transition"
+          >
+            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+              <Map className="h-5 w-5" />
+            </div>
+            <div className="flex-1 text-left">
+              <p className="text-sm font-bold text-foreground">Mapa do site</p>
+              <p className="text-[11px] text-muted-foreground">
+                Serviços, cidades e bairros atendidos
+              </p>
+            </div>
+            <ArrowRight className="h-5 w-5 text-muted-foreground" />
+          </button>
+        </section>
+      )}
 
       {/* Discreet admin entry */}
       {onOpenAdmin && (
