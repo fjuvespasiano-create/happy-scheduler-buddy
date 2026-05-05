@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, Sofa, Bed, Car, CarFront, HardHat, Armchair, MapPin, CalendarDays, Clock, Sparkles, Phone, User, Camera, X, MessageCircle, Baby, BedDouble, Utensils, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import type { Appointment } from "@/hooks/useAppState";
 import type { CustomerLocation } from "@/hooks/useCustomerLocation";
+
+const SITE_LOGO_URL = `${typeof window !== "undefined" ? window.location.origin : ""}/mascote-auto-limpeza-pro.png`;
 
 interface SmartBookingWizardProps {
   onClose: () => void;
@@ -228,6 +231,8 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState(customerLocation?.address ?? "");
   const [photo, setPhoto] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [sending, setSending] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(BOOKING_TIME_LIMIT_SECONDS);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -278,11 +283,12 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
 
   const COMPANY_WHATSAPP = "5531980252882";
 
-  const buildWhatsAppMessage = () => {
+  const buildWhatsAppMessage = (photoUrl?: string | null) => {
     if (!service || !option || !date) return "";
     const dateLabel = date.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long" });
     const lines = [
       "*Novo orçamento — Auto Limpeza Pro*",
+      `🖼️ ${SITE_LOGO_URL}`,
       "",
       `👤 *Cliente:* ${name}`,
       `📱 *WhatsApp:* ${phone}`,
@@ -297,7 +303,7 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
       `💰 *Valor estimado:* ${formatBRL(estimatedPrice)}`,
       "_(valor pode variar conforme avaliação no local)_",
       "",
-      photo ? "📷 *Vou enviar uma foto do item neste chat.*" : "",
+      photoUrl ? `📷 *Foto do item:* ${photoUrl}` : "",
       "",
       "Confirma para mim, por favor?",
     ].filter(Boolean);
@@ -341,8 +347,28 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
     });
   };
 
-  const handleConfirm = () => {
-    if (!service || !option || !date) return;
+  const uploadPhoto = async (): Promise<string | null> => {
+    if (!photoFile) return null;
+    try {
+      const ext = photoFile.name.split(".").pop()?.toLowerCase() || "jpg";
+      const path = `${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage
+        .from("orcamento-fotos")
+        .upload(path, photoFile, { contentType: photoFile.type, upsert: false });
+      if (error) throw error;
+      const { data } = supabase.storage.from("orcamento-fotos").getPublicUrl(path);
+      return data.publicUrl;
+    } catch (err) {
+      console.error("Falha no upload da foto:", err);
+      toast.error("Não foi possível enviar a foto", { description: "Você pode anexá-la diretamente no WhatsApp." });
+      return null;
+    }
+  };
+
+  const handleConfirm = async () => {
+    if (!service || !option || !date || sending) return;
+    setSending(true);
+    const photoUrl = await uploadPhoto();
     const dateStr = date.toISOString().split("T")[0];
     onConfirm({
       time,
@@ -358,13 +384,14 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
       status: "pending",
       duration: estimatedDuration,
     });
-    const msg = encodeURIComponent(buildWhatsAppMessage());
+    const msg = encodeURIComponent(buildWhatsAppMessage(photoUrl));
     window.open(`https://wa.me/${COMPANY_WHATSAPP}?text=${msg}`, "_blank");
     toast.success("Orçamento enviado!", {
-      description: photo
-        ? "Anexe a foto no WhatsApp que abrimos para você."
+      description: photoUrl
+        ? "Foto anexada como link no WhatsApp."
         : `${service.name} em ${date.toLocaleDateString("pt-BR")} às ${time}`,
     });
+    setSending(false);
     onClose();
   };
 
@@ -375,6 +402,7 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
       toast.error("Foto muito grande", { description: "Envie uma imagem de até 5MB." });
       return;
     }
+    setPhotoFile(file);
     const reader = new FileReader();
     reader.onload = () => setPhoto(reader.result as string);
     reader.readAsDataURL(file);
@@ -656,7 +684,7 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
                 <img src={photo} alt="Foto do item" className="w-full aspect-[4/3] object-cover" />
                 <button
                   type="button"
-                  onClick={() => setPhoto(null)}
+                  onClick={() => { setPhoto(null); setPhotoFile(null); }}
                   className="absolute top-3 right-3 w-9 h-9 rounded-full bg-background/90 backdrop-blur flex items-center justify-center shadow-salon"
                 >
                   <X className="h-5 w-5 text-foreground" />
@@ -775,9 +803,10 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
           <div className="space-y-2">
             <button
               onClick={handleConfirm}
-              className="w-full h-14 rounded-2xl bg-[#25D366] text-white font-bold flex items-center justify-center gap-2 shadow-salon-lg active:scale-[0.98] transition-all"
+              disabled={sending}
+              className="w-full h-14 rounded-2xl bg-[#25D366] text-white font-bold flex items-center justify-center gap-2 shadow-salon-lg active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <MessageCircle className="h-5 w-5" /> Enviar orçamento pelo WhatsApp
+              <MessageCircle className="h-5 w-5" /> {sending ? "Enviando foto..." : "Enviar orçamento pelo WhatsApp"}
             </button>
             <button
               onClick={handleAddToCalendar}
