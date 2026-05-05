@@ -57,12 +57,23 @@ export function SmartHome({ onStartBooking, customerLocation, locationStatus, on
           <span className="text-xs font-semibold text-primary">São José da Lapa, Vespasiano e região</span>
         </div>
 
-        <h1 className="text-3xl font-bold text-foreground leading-tight">
-          Referência em higienização <span className="text-gradient">agendada em minutos</span>
-        </h1>
-        <p className="text-muted-foreground mt-2">
-          Sofás, colchões, tapetes, automóveis, impermeabilização e pós-obra com orçamento rápido.
-        </p>
+        <div className="flex items-start gap-3">
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-foreground leading-tight">
+              Referência em higienização <span className="text-gradient">agendada em minutos</span>
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Sofás, colchões, tapetes, automóveis, impermeabilização e pós-obra com orçamento rápido.
+            </p>
+          </div>
+          <img
+            src={mascotImg}
+            alt="Mascote Auto Limpeza Pro"
+            width={120}
+            height={120}
+            className="w-24 h-24 sm:w-28 sm:h-28 object-contain shrink-0 drop-shadow-[0_8px_24px_rgba(14,165,255,0.35)] animate-fade-in-up"
+          />
+        </div>
         <div className="mt-4 flex items-start gap-2 rounded-2xl bg-card border border-border p-3">
           <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground leading-relaxed">{locationText}</p>
