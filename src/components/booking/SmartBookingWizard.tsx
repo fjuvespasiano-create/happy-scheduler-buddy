@@ -283,11 +283,12 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
 
   const COMPANY_WHATSAPP = "5531980252882";
 
-  const buildWhatsAppMessage = () => {
+  const buildWhatsAppMessage = (photoUrl?: string | null) => {
     if (!service || !option || !date) return "";
     const dateLabel = date.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long" });
     const lines = [
       "*Novo orçamento — Auto Limpeza Pro*",
+      `🖼️ ${SITE_LOGO_URL}`,
       "",
       `👤 *Cliente:* ${name}`,
       `📱 *WhatsApp:* ${phone}`,
@@ -302,7 +303,7 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
       `💰 *Valor estimado:* ${formatBRL(estimatedPrice)}`,
       "_(valor pode variar conforme avaliação no local)_",
       "",
-      photo ? "📷 *Vou enviar uma foto do item neste chat.*" : "",
+      photoUrl ? `📷 *Foto do item:* ${photoUrl}` : "",
       "",
       "Confirma para mim, por favor?",
     ].filter(Boolean);
