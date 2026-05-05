@@ -684,7 +684,7 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
                 <img src={photo} alt="Foto do item" className="w-full aspect-[4/3] object-cover" />
                 <button
                   type="button"
-                  onClick={() => setPhoto(null)}
+                  onClick={() => { setPhoto(null); setPhotoFile(null); }}
                   className="absolute top-3 right-3 w-9 h-9 rounded-full bg-background/90 backdrop-blur flex items-center justify-center shadow-salon"
                 >
                   <X className="h-5 w-5 text-foreground" />
