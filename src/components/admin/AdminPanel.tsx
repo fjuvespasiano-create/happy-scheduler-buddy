@@ -101,17 +101,29 @@ export function AdminPanel({ onBack, onNavigate, onLogout, stats }: AdminPanelPr
   return (
     <AdminLayout
       title="Painel administrativo"
-      subtitle="Controle operacional"
+      subtitle={user?.email ?? "Controle operacional"}
       onBack={onBack}
       breadcrumbs={[{ label: "Admin" }]}
       actions={
-        <button
-          onClick={handleLogout}
-          aria-label="Sair"
-          className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center hover:bg-destructive/10 hover:text-destructive transition"
-        >
-          <LogOut className="h-5 w-5" />
-        </button>
+        <>
+          {isAdmin && (
+            <button
+              onClick={() => onNavigate("/admin/auditoria")}
+              aria-label="Auditoria"
+              title="Auditoria"
+              className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center hover:bg-primary/10 hover:text-primary transition"
+            >
+              <ScrollText className="h-5 w-5" />
+            </button>
+          )}
+          <button
+            onClick={handleLogout}
+            aria-label="Sair"
+            className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center hover:bg-destructive/10 hover:text-destructive transition"
+          >
+            <LogOut className="h-5 w-5" />
+          </button>
+        </>
       }
     >
       <div className="p-4 space-y-5">
