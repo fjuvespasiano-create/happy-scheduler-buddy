@@ -1,4 +1,4 @@
-/* CleanPro Agenda — Service Worker
+/* Auto Limpeza Pro — Service Worker
  * Estratégia: NetworkFirst para HTML (evita cache de shell antigo),
  * StaleWhileRevalidate para assets estáticos. Push notifications habilitadas.
  */
@@ -69,7 +69,7 @@ self.addEventListener("fetch", (event) => {
 
 // === Push notifications ===
 self.addEventListener("push", (event) => {
-  let data = { title: "CleanPro Agenda", body: "Você tem uma nova notificação." };
+  let data = { title: "Auto Limpeza Pro", body: "Você tem uma nova notificação." };
   try {
     if (event.data) data = { ...data, ...event.data.json() };
   } catch {
