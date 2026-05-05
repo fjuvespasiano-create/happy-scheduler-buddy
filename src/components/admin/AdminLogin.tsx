@@ -1,45 +1,61 @@
 import { useState } from "react";
-import { ArrowLeft, Lock, User, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Lock, Mail, Eye, EyeOff, ShieldCheck, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-
-// Credenciais ofuscadas como hash SHA-256 (não expõem usuário/senha em texto puro no bundle)
-const ADMIN_USER_HASH = "15093185b5e617a71eb4e50c8a922f86130f97cd3d708b96fd0032a83c003279";
-const ADMIN_PASS_HASH = "6a3f249b9d8330e75aaaba71b9faeb897dfa7c7db19a2dcdfc39a8dced693367";
-const SESSION_KEY = "cleanpro_admin_session_v1";
-
-async function sha256(text: string): Promise<string> {
-  const buf = new TextEncoder().encode(text);
-  const hash = await crypto.subtle.digest("SHA-256", buf);
-  return Array.from(new Uint8Array(hash))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
+import { useAuth, logAudit } from "@/hooks/useAuth";
 
 interface AdminLoginProps {
   onBack: () => void;
   onSuccess: () => void;
 }
 
+type Mode = "signin" | "signup" | "recover";
+
 export function AdminLogin({ onBack, onSuccess }: AdminLoginProps) {
-  const [user, setUser] = useState("");
-  const [pass, setPass] = useState("");
+  const { signIn, signUp } = useAuth();
+  const [mode, setMode] = useState<Mode>("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [showPass, setShowPass] = useState(false);
-  const [attempts, setAttempts] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (attempts >= 5) {
-      toast.error("Muitas tentativas", { description: "Aguarde alguns minutos antes de tentar novamente." });
-      return;
-    }
-    const [uHash, pHash] = await Promise.all([sha256(user.trim()), sha256(pass.trim())]);
-    if (uHash === ADMIN_USER_HASH && pHash === ADMIN_PASS_HASH) {
-      try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* noop */ }
-      toast.success("Bem-vindo, administrador");
-      onSuccess();
-    } else {
-      setAttempts((a) => a + 1);
-      toast.error("Credenciais inválidas");
+    setLoading(true);
+    try {
+      if (mode === "signin") {
+        const { error } = await signIn(email.trim(), password);
+        if (error) {
+          toast.error("Falha no login", { description: error.message });
+          return;
+        }
+        await logAudit("admin.login");
+        toast.success("Bem-vindo!");
+        onSuccess();
+      } else if (mode === "signup") {
+        const { error } = await signUp(email.trim(), password, name.trim() || undefined);
+        if (error) {
+          toast.error("Falha no cadastro", { description: error.message });
+          return;
+        }
+        toast.success("Conta criada", {
+          description: "Verifique seu e-mail para confirmar.",
+        });
+        setMode("signin");
+      } else {
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) {
+          toast.error("Erro ao enviar e-mail", { description: error.message });
+          return;
+        }
+        toast.success("Verifique seu e-mail para redefinir a senha");
+        setMode("signin");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,6 +65,7 @@ export function AdminLogin({ onBack, onSuccess }: AdminLoginProps) {
         <div className="flex items-center gap-3 px-4 py-3">
           <button
             onClick={onBack}
+            aria-label="Voltar"
             className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center hover:bg-muted/70 transition"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -64,58 +81,109 @@ export function AdminLogin({ onBack, onSuccess }: AdminLoginProps) {
               <ShieldCheck className="h-10 w-10 text-primary-foreground" />
             </div>
             <h2 className="text-2xl font-bold text-foreground">Painel Auto Limpeza Pro</h2>
-            <p className="text-muted-foreground mt-2 text-sm">Área restrita à administração</p>
+            <p className="text-muted-foreground mt-2 text-sm">
+              {mode === "signin" && "Entre com seu e-mail e senha"}
+              {mode === "signup" && "Crie sua conta de operador"}
+              {mode === "recover" && "Recuperar senha"}
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
+            {mode === "signup" && (
+              <div>
+                <label className="text-sm text-muted-foreground mb-2 block">Nome</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full p-4 bg-muted rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Seu nome"
+                />
+              </div>
+            )}
+
             <div>
-              <label htmlFor="adm-user" className="text-sm text-muted-foreground mb-2 flex items-center gap-2">
-                <User className="h-4 w-4" /> Usuário
+              <label className="text-sm text-muted-foreground mb-2 flex items-center gap-2">
+                <Mail className="h-4 w-4" /> E-mail
               </label>
               <input
-                id="adm-user"
-                type="text"
-                value={user}
-                onChange={(e) => setUser(e.target.value)}
-                autoComplete="off"
-                maxLength={64}
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="username"
                 className="w-full p-4 bg-muted rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="usuário"
+                placeholder="voce@empresa.com"
               />
             </div>
 
-            <div>
-              <label htmlFor="adm-pass" className="text-sm text-muted-foreground mb-2 flex items-center gap-2">
-                <Lock className="h-4 w-4" /> Senha
-              </label>
-              <div className="relative">
-                <input
-                  id="adm-pass"
-                  type={showPass ? "text" : "password"}
-                  value={pass}
-                  onChange={(e) => setPass(e.target.value)}
-                  autoComplete="off"
-                  maxLength={64}
-                  className="w-full p-4 pr-12 bg-muted rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="senha"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground"
-                >
-                  {showPass ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
+            {mode !== "recover" && (
+              <div>
+                <label className="text-sm text-muted-foreground mb-2 flex items-center gap-2">
+                  <Lock className="h-4 w-4" /> Senha
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPass ? "text" : "password"}
+                    required
+                    minLength={6}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                    className="w-full p-4 pr-12 bg-muted rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass(!showPass)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground"
+                  >
+                    {showPass ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             <button
               type="submit"
-              disabled={!user || !pass}
+              disabled={loading || !email}
               className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-bold flex items-center justify-center gap-2 shadow-salon disabled:opacity-40 active:scale-[0.98] transition-all"
             >
-              Entrar no painel
+              {loading && <Loader2 className="h-5 w-5 animate-spin" />}
+              {mode === "signin" && "Entrar no painel"}
+              {mode === "signup" && "Criar conta"}
+              {mode === "recover" && "Enviar e-mail de recuperação"}
             </button>
+
+            <div className="flex flex-col gap-2 text-center text-sm">
+              {mode === "signin" && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setMode("recover")}
+                    className="text-primary hover:underline"
+                  >
+                    Esqueci minha senha
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMode("signup")}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Não tem conta? Criar agora
+                  </button>
+                </>
+              )}
+              {mode !== "signin" && (
+                <button
+                  type="button"
+                  onClick={() => setMode("signin")}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  ← Voltar para login
+                </button>
+              )}
+            </div>
           </form>
         </div>
       </main>
@@ -123,20 +191,12 @@ export function AdminLogin({ onBack, onSuccess }: AdminLoginProps) {
   );
 }
 
+// Compat com chamadas antigas (Index.tsx)
 export function isAdminAuthenticated(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    return sessionStorage.getItem(SESSION_KEY) === "1";
-  } catch {
-    return false;
-  }
+  // Mantido pra não quebrar imports — agora a verdade vive no useAuth.
+  return false;
 }
 
 export function adminLogout() {
-  if (typeof window === "undefined") return;
-  try {
-    sessionStorage.removeItem(SESSION_KEY);
-  } catch {
-    /* noop */
-  }
+  // Mantido pra compat — substituído por useAuth().signOut()
 }

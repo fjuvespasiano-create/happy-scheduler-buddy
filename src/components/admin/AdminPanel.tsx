@@ -13,10 +13,22 @@ import {
   AlertCircle,
   CheckCircle2,
   ChevronRight,
+  ScrollText,
 } from "lucide-react";
-import { adminLogout } from "./AdminLogin";
 import { AdminLayout } from "./AdminLayout";
 import { toast } from "sonner";
+import { useAuth, logAudit } from "@/hooks/useAuth";
+
+interface AdminPanelProps {
+  onBack: () => void;
+  onNavigate: (path: string) => void;
+  onLogout: () => void;
+  stats: {
+    totalAppointments: number;
+    pendingAppointments: number;
+    todaySales: number;
+  };
+}
 
 interface AdminPanelProps {
   onBack: () => void;
@@ -45,6 +57,7 @@ const QUICK_ACTIONS = [
 
 export function AdminPanel({ onBack, onNavigate, onLogout, stats }: AdminPanelProps) {
   const [query, setQuery] = useState("");
+  const { user, isAdmin, signOut } = useAuth();
 
   const filteredModules = useMemo(() => {
     if (!query.trim()) return MODULES;
@@ -54,8 +67,9 @@ export function AdminPanel({ onBack, onNavigate, onLogout, stats }: AdminPanelPr
     );
   }, [query]);
 
-  const handleLogout = () => {
-    adminLogout();
+  const handleLogout = async () => {
+    await logAudit("admin.logout");
+    await signOut();
     toast.success("Sessão encerrada");
     onLogout();
   };
@@ -87,17 +101,29 @@ export function AdminPanel({ onBack, onNavigate, onLogout, stats }: AdminPanelPr
   return (
     <AdminLayout
       title="Painel administrativo"
-      subtitle="Controle operacional"
+      subtitle={user?.email ?? "Controle operacional"}
       onBack={onBack}
       breadcrumbs={[{ label: "Admin" }]}
       actions={
-        <button
-          onClick={handleLogout}
-          aria-label="Sair"
-          className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center hover:bg-destructive/10 hover:text-destructive transition"
-        >
-          <LogOut className="h-5 w-5" />
-        </button>
+        <>
+          {isAdmin && (
+            <button
+              onClick={() => onNavigate("/admin/auditoria")}
+              aria-label="Auditoria"
+              title="Auditoria"
+              className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center hover:bg-primary/10 hover:text-primary transition"
+            >
+              <ScrollText className="h-5 w-5" />
+            </button>
+          )}
+          <button
+            onClick={handleLogout}
+            aria-label="Sair"
+            className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center hover:bg-destructive/10 hover:text-destructive transition"
+          >
+            <LogOut className="h-5 w-5" />
+          </button>
+        </>
       }
     >
       <div className="p-4 space-y-5">

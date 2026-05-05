@@ -9,14 +9,16 @@ import { PerfilPage } from "@/pages/PerfilPage";
 import FinancasPage from "@/pages/FinancasPage";
 import { SmartHome } from "@/components/home/SmartHome";
 import { SmartBookingWizard } from "@/components/booking/SmartBookingWizard";
-import { AdminLogin, isAdminAuthenticated } from "@/components/admin/AdminLogin";
+import { AdminLogin } from "@/components/admin/AdminLogin";
 import { AdminPanel } from "@/components/admin/AdminPanel";
+import { AuditLogPage } from "@/components/admin/AuditLogPage";
 import { SubscriptionPlans } from "@/components/plans/SubscriptionPlans";
 import { SiteMapPage } from "@/pages/SiteMapPage";
 import { useAppState } from "@/hooks/useAppState";
 import { useCustomerLocation } from "@/hooks/useCustomerLocation";
+import { useAuth } from "@/hooks/useAuth";
 
-const ADMIN_ROUTES = new Set(["/admin", "/agenda", "/caixa", "/vendas", "/perfil", "/financas"]);
+const ADMIN_ROUTES = new Set(["/admin", "/admin/auditoria", "/agenda", "/caixa", "/vendas", "/perfil", "/financas"]);
 
 const Index = () => {
   const [currentPath, setCurrentPath] = useState("/");
@@ -25,10 +27,11 @@ const Index = () => {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [bookingService, setBookingService] = useState<string | undefined>(undefined);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
-  const [isAdmin, setIsAdmin] = useState<boolean>(isAdminAuthenticated());
   const [plansOpen, setPlansOpen] = useState(false);
   const [plansInitialId, setPlansInitialId] = useState<string | undefined>(undefined);
   const { location: customerLocation, status: locationStatus } = useCustomerLocation();
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const isAdmin = isAuthenticated; // qualquer usuário autenticado pode acessar; RBAC fino é por feature
 
   const {
     sales,
@@ -56,8 +59,7 @@ const Index = () => {
   };
 
   const requestAdmin = () => {
-    if (isAdminAuthenticated()) {
-      setIsAdmin(true);
+    if (isAdmin) {
       setCurrentPath("/admin");
     } else {
       setShowAdminLogin(true);
@@ -73,7 +75,7 @@ const Index = () => {
   };
 
   // Gate: redirect protected paths to login if not admin
-  if (ADMIN_ROUTES.has(currentPath) && !isAdmin) {
+  if (ADMIN_ROUTES.has(currentPath) && !isAdmin && !authLoading) {
     return (
       <AdminLogin
         onBack={() => {
@@ -81,7 +83,6 @@ const Index = () => {
           setShowAdminLogin(false);
         }}
         onSuccess={() => {
-          setIsAdmin(true);
           setShowAdminLogin(false);
         }}
       />
@@ -102,7 +103,6 @@ const Index = () => {
         onBack={() => setCurrentPath("/")}
         onNavigate={goToAdminRoute}
         onLogout={() => {
-          setIsAdmin(false);
           setCurrentPath("/");
         }}
         stats={{
@@ -112,6 +112,10 @@ const Index = () => {
         }}
       />
     );
+  }
+
+  if (currentPath === "/admin/auditoria") {
+    return <AuditLogPage onBack={() => setCurrentPath("/admin")} />;
   }
 
   // ==================== ADMIN-ONLY ROUTES ====================
@@ -237,7 +241,6 @@ const Index = () => {
         <AdminLogin
           onBack={() => setShowAdminLogin(false)}
           onSuccess={() => {
-            setIsAdmin(true);
             setShowAdminLogin(false);
             setCurrentPath("/admin");
           }}
