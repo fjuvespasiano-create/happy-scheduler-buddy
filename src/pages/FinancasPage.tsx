@@ -2,7 +2,7 @@ import { useState } from "react";
 import { 
   Wallet, TrendingUp, TrendingDown, ArrowUpDown, 
   Plus, PieChart, BarChart3, CreditCard, Target,
-  Receipt, RefreshCw, Bell
+  Receipt, RefreshCw, Bell, ArrowLeft
 } from "lucide-react";
 import { usePersonalFinance } from "@/hooks/usePersonalFinance";
 import { FinanceDashboard } from "@/components/finance/FinanceDashboard";
@@ -46,12 +46,22 @@ export default function FinancasPage({ onBack, openExpenseOnMount }: FinancasPag
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground p-6 pt-12 pb-8 rounded-b-3xl">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-bold">Finanças Pessoais</h1>
-            <p className="text-primary-foreground/80 text-sm">Controle seus gastos</p>
+        <div className="flex items-center gap-3 mb-4">
+          {onBack && (
+            <button
+              onClick={onBack}
+              aria-label="Voltar"
+              className="w-10 h-10 rounded-xl bg-primary-foreground/15 hover:bg-primary-foreground/25 flex items-center justify-center transition shrink-0"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+          )}
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] text-primary-foreground/70 uppercase tracking-wide">Admin · Finanças</p>
+            <h1 className="text-xl font-bold leading-tight">Finanças</h1>
+            <p className="text-primary-foreground/80 text-xs">Controle de receitas e despesas</p>
           </div>
-          <button className="p-2 rounded-full bg-primary-foreground/20 hover:bg-primary-foreground/30 transition-colors relative">
+          <button className="p-2 rounded-full bg-primary-foreground/20 hover:bg-primary-foreground/30 transition-colors relative shrink-0">
             <Bell className="h-5 w-5" />
             {finance.alerts.filter(a => !a.isRead).length > 0 && (
               <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center">
