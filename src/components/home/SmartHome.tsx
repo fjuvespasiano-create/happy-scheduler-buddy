@@ -1,6 +1,8 @@
 import { Sparkles, Sofa, Bed, Car, CarFront, HardHat, Armchair, ArrowRight, Calendar, Clock, ShieldCheck, Star, Phone, MapPin, Baby, BedDouble, Utensils, LayoutDashboard } from "lucide-react";
 import type { CustomerLocation } from "@/hooks/useCustomerLocation";
 import { PlansHighlight } from "@/components/plans/PlansHighlight";
+import logoImg from "@/assets/logo.png";
+import mascotImg from "@/assets/mascot.png";
 
 interface SmartHomeProps {
   onStartBooking: (serviceId?: string) => void;
@@ -37,13 +39,7 @@ export function SmartHome({ onStartBooking, customerLocation, locationStatus, on
       <header className="px-5 pt-8 pb-6 safe-top">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-salon">
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground leading-none">Auto Limpeza Pro</p>
-              <p className="font-bold text-foreground leading-tight">Agendamento</p>
-            </div>
+            <img src={logoImg} alt="Auto Limpeza Pro" width={160} height={48} className="h-12 w-auto object-contain" />
           </div>
           <a
             href="https://wa.me/5531980252882?text=Ol%C3%A1,%20gostaria%20de%20agendar%20uma%20higieniza%C3%A7%C3%A3o."
@@ -61,12 +57,23 @@ export function SmartHome({ onStartBooking, customerLocation, locationStatus, on
           <span className="text-xs font-semibold text-primary">São José da Lapa, Vespasiano e região</span>
         </div>
 
-        <h1 className="text-3xl font-bold text-foreground leading-tight">
-          Referência em higienização <span className="text-gradient">agendada em minutos</span>
-        </h1>
-        <p className="text-muted-foreground mt-2">
-          Sofás, colchões, tapetes, automóveis, impermeabilização e pós-obra com orçamento rápido.
-        </p>
+        <div className="flex items-start gap-3">
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-foreground leading-tight">
+              Referência em higienização <span className="text-gradient">agendada em minutos</span>
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Sofás, colchões, tapetes, automóveis, impermeabilização e pós-obra com orçamento rápido.
+            </p>
+          </div>
+          <img
+            src={mascotImg}
+            alt="Mascote Auto Limpeza Pro"
+            width={120}
+            height={120}
+            className="w-24 h-24 sm:w-28 sm:h-28 object-contain shrink-0 drop-shadow-[0_8px_24px_rgba(14,165,255,0.35)] animate-fade-in-up"
+          />
+        </div>
         <div className="mt-4 flex items-start gap-2 rounded-2xl bg-card border border-border p-3">
           <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground leading-relaxed">{locationText}</p>
