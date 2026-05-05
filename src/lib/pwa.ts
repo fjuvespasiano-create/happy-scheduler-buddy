@@ -1,9 +1,9 @@
 /**
- * Registro do service worker e helpers de notificação.
+ * Registro do service worker e helpers de notificação push.
  *
- * IMPORTANT: o SW NUNCA é registrado dentro de iframes ou hosts de preview do
+ * Importante: o SW NUNCA registra dentro de iframes ou hosts de preview do
  * Lovable (evita cache poluído na edição). Em produção (build publicado) o SW
- * é registrado normalmente.
+ * é registrado normalmente via /sw.js.
  */
 
 const isInIframe = (() => {
@@ -18,34 +18,36 @@ const isInIframe = (() => {
 const isPreviewHost =
   typeof window !== "undefined" &&
   (window.location.hostname.includes("id-preview--") ||
-    window.location.hostname.includes("lovableproject.com") ||
-    window.location.hostname.includes("lovable.app"));
+    window.location.hostname.includes("lovableproject.com"));
 
 export function shouldRegisterPWA(): boolean {
   if (typeof window === "undefined") return false;
   if (!("serviceWorker" in navigator)) return false;
   if (isInIframe) return false;
   if (isPreviewHost) return false;
-  if (!import.meta.env.PROD) return false;
   return true;
 }
 
-export async function registerPWA() {
-  // Em preview/iframe: limpa qualquer SW antigo que tenha sobrado
+export async function registerPWA(): Promise<ServiceWorkerRegistration | null> {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) return null;
+
+  // Em preview/iframe: limpa qualquer SW antigo e sai
   if (!shouldRegisterPWA()) {
-    if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
+    try {
       const regs = await navigator.serviceWorker.getRegistrations();
-      regs.forEach((r) => r.unregister());
-    }
-    return;
+      await Promise.all(regs.map((r) => r.unregister()));
+    } catch {}
+    return null;
   }
 
   try {
-    // PWA registration disabled in this build (no virtual:pwa-register plugin configured)
-    // const { registerSW } = await import("virtual:pwa-register");
-    // registerSW({ immediate: true });
+    const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+    // Atualiza em background
+    reg.update().catch(() => {});
+    return reg;
   } catch (err) {
     console.warn("[PWA] register failed", err);
+    return null;
   }
 }
 
@@ -66,9 +68,15 @@ export function getNotificationPermission(): NotificationPermissionState {
 export async function requestNotificationPermission(): Promise<NotificationPermissionState> {
   if (typeof window === "undefined" || !("Notification" in window))
     return "unsupported";
-  if (Notification.permission === "granted") return "granted";
+  if (Notification.permission === "granted") {
+    await ensurePushSubscription().catch(() => {});
+    return "granted";
+  }
   if (Notification.permission === "denied") return "denied";
   const result = await Notification.requestPermission();
+  if (result === "granted") {
+    await ensurePushSubscription().catch(() => {});
+  }
   return result as NotificationPermissionState;
 }
 
@@ -86,7 +94,6 @@ export async function showNotification(
     ...options,
   };
 
-  // Preferir SW (funciona em background no Android)
   if ("serviceWorker" in navigator) {
     const reg = await navigator.serviceWorker.getRegistration();
     if (reg) {
@@ -97,9 +104,48 @@ export async function showNotification(
   new Notification(title, opts);
 }
 
+// === Web Push subscription ===
+
+function urlBase64ToUint8Array(base64String: string): Uint8Array {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const raw = atob(base64);
+  const out = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; ++i) out[i] = raw.charCodeAt(i);
+  return out;
+}
+
+/**
+ * Garante uma push subscription. Requer VITE_VAPID_PUBLIC_KEY para enviar
+ * push do servidor; sem ela, apenas notificações locais funcionam.
+ */
+export async function ensurePushSubscription(): Promise<PushSubscription | null> {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) return null;
+  if (!("PushManager" in window)) return null;
+
+  const reg = await navigator.serviceWorker.getRegistration();
+  if (!reg) return null;
+
+  const existing = await reg.pushManager.getSubscription();
+  if (existing) return existing;
+
+  const vapidKey = (import.meta as any).env?.VITE_VAPID_PUBLIC_KEY as string | undefined;
+  if (!vapidKey) return null;
+
+  try {
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(vapidKey),
+    });
+    // TODO: enviar `sub` ao backend para armazenar e disparar push
+    return sub;
+  } catch (err) {
+    console.warn("[PWA] push subscribe failed", err);
+    return null;
+  }
+}
+
 // Lembrete local agendado via setTimeout (válido enquanto a aba viver).
-// Ideal para confirmações imediatas (ex.: "agendamento criado") e
-// lembretes curtos (até algumas horas antes do serviço).
 export function scheduleLocalReminder(
   title: string,
   body: string,
@@ -110,7 +156,6 @@ export function scheduleLocalReminder(
     void showNotification(title, { body });
     return;
   }
-  // Limita a 24h por segurança
   const safeDelay = Math.min(delay, 24 * 60 * 60 * 1000);
   setTimeout(() => {
     void showNotification(title, { body });
