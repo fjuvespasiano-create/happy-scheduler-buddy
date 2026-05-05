@@ -59,9 +59,10 @@ export function VendasPage({ onBack, onNewSale, sales = [] }: VendasPageProps) {
           <button onClick={onBack} className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <div className="flex-1">
-            <h1 className="font-bold text-lg text-foreground">Vendas</h1>
-            <p className="text-xs text-muted-foreground">{totalSalesCount} vendas hoje</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Admin · Vendas</p>
+            <h1 className="font-bold text-base text-foreground leading-tight">Vendas</h1>
+            <p className="text-[11px] text-muted-foreground">{totalSalesCount} vendas hoje</p>
           </div>
           <Button size="sm" onClick={onNewSale}>
             Nova Venda
