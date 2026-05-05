@@ -103,7 +103,6 @@ const Index = () => {
         onBack={() => setCurrentPath("/")}
         onNavigate={goToAdminRoute}
         onLogout={() => {
-          setIsAdmin(false);
           setCurrentPath("/");
         }}
         stats={{
@@ -238,7 +237,6 @@ const Index = () => {
         <AdminLogin
           onBack={() => setShowAdminLogin(false)}
           onSuccess={() => {
-            setIsAdmin(true);
             setShowAdminLogin(false);
             setCurrentPath("/admin");
           }}
