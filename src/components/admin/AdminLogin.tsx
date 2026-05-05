@@ -26,13 +26,14 @@ export function AdminLogin({ onBack, onSuccess }: AdminLoginProps) {
   const [showPass, setShowPass] = useState(false);
   const [attempts, setAttempts] = useState(0);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (attempts >= 5) {
       toast.error("Muitas tentativas", { description: "Aguarde alguns minutos antes de tentar novamente." });
       return;
     }
-    if (user.trim() === ADMIN_USER && pass === ADMIN_PASS) {
+    const [uHash, pHash] = await Promise.all([sha256(user.trim()), sha256(pass)]);
+    if (uHash === ADMIN_USER_HASH && pHash === ADMIN_PASS_HASH) {
       try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* noop */ }
       toast.success("Bem-vindo, administrador");
       onSuccess();
