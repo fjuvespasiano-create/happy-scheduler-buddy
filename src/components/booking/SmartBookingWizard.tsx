@@ -347,8 +347,28 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
     });
   };
 
-  const handleConfirm = () => {
-    if (!service || !option || !date) return;
+  const uploadPhoto = async (): Promise<string | null> => {
+    if (!photoFile) return null;
+    try {
+      const ext = photoFile.name.split(".").pop()?.toLowerCase() || "jpg";
+      const path = `${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage
+        .from("orcamento-fotos")
+        .upload(path, photoFile, { contentType: photoFile.type, upsert: false });
+      if (error) throw error;
+      const { data } = supabase.storage.from("orcamento-fotos").getPublicUrl(path);
+      return data.publicUrl;
+    } catch (err) {
+      console.error("Falha no upload da foto:", err);
+      toast.error("Não foi possível enviar a foto", { description: "Você pode anexá-la diretamente no WhatsApp." });
+      return null;
+    }
+  };
+
+  const handleConfirm = async () => {
+    if (!service || !option || !date || sending) return;
+    setSending(true);
+    const photoUrl = await uploadPhoto();
     const dateStr = date.toISOString().split("T")[0];
     onConfirm({
       time,
@@ -364,13 +384,14 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
       status: "pending",
       duration: estimatedDuration,
     });
-    const msg = encodeURIComponent(buildWhatsAppMessage());
+    const msg = encodeURIComponent(buildWhatsAppMessage(photoUrl));
     window.open(`https://wa.me/${COMPANY_WHATSAPP}?text=${msg}`, "_blank");
     toast.success("Orçamento enviado!", {
-      description: photo
-        ? "Anexe a foto no WhatsApp que abrimos para você."
+      description: photoUrl
+        ? "Foto anexada como link no WhatsApp."
         : `${service.name} em ${date.toLocaleDateString("pt-BR")} às ${time}`,
     });
+    setSending(false);
     onClose();
   };
 
@@ -381,6 +402,7 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
       toast.error("Foto muito grande", { description: "Envie uma imagem de até 5MB." });
       return;
     }
+    setPhotoFile(file);
     const reader = new FileReader();
     reader.onload = () => setPhoto(reader.result as string);
     reader.readAsDataURL(file);
