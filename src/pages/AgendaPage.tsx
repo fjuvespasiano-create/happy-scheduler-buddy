@@ -157,9 +157,10 @@ export function AgendaPage({
           <button onClick={onBack} className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <div className="flex-1">
-            <h1 className="font-bold text-lg text-foreground">Agenda</h1>
-            <p className="text-xs text-muted-foreground">
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Admin · Agenda</p>
+            <h1 className="font-bold text-base text-foreground leading-tight">Agenda</h1>
+            <p className="text-[11px] text-muted-foreground">
               {confirmedCount} confirmados, {pendingCount} pendentes
             </p>
           </div>
