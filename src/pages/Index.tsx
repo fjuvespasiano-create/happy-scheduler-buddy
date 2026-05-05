@@ -114,6 +114,10 @@ const Index = () => {
     );
   }
 
+  if (currentPath === "/admin/auditoria") {
+    return <AuditLogPage onBack={() => setCurrentPath("/admin")} />;
+  }
+
   // ==================== ADMIN-ONLY ROUTES ====================
 
   if (currentPath === "/caixa") {
