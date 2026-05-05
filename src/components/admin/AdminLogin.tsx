@@ -3,7 +3,7 @@ import { ArrowLeft, Lock, User, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 const ADMIN_USER = "proclean@2026";
-const ADMIN_PASS = "limpeza@2026";
+const ADMIN_PASS = "suíça@206";
 const SESSION_KEY = "cleanpro_admin_session_v1";
 
 interface AdminLoginProps {
