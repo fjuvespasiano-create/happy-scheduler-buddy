@@ -12,7 +12,7 @@ const DISMISS_KEY = "cleanpro_notif_banner_dismissed_v1";
 export function NotificationsBanner() {
   const [permission, setPermission] = useState<NotificationPermissionState>("default");
   const [dismissed, setDismissed] = useState<boolean>(
-    () => localStorage.getItem(DISMISS_KEY) === "1",
+    () => typeof window !== "undefined" && localStorage.getItem(DISMISS_KEY) === "1",
   );
   const [loading, setLoading] = useState(false);
 
