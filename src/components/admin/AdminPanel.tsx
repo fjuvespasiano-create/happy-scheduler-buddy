@@ -13,10 +13,22 @@ import {
   AlertCircle,
   CheckCircle2,
   ChevronRight,
+  ScrollText,
 } from "lucide-react";
-import { adminLogout } from "./AdminLogin";
 import { AdminLayout } from "./AdminLayout";
 import { toast } from "sonner";
+import { useAuth, logAudit } from "@/hooks/useAuth";
+
+interface AdminPanelProps {
+  onBack: () => void;
+  onNavigate: (path: string) => void;
+  onLogout: () => void;
+  stats: {
+    totalAppointments: number;
+    pendingAppointments: number;
+    todaySales: number;
+  };
+}
 
 interface AdminPanelProps {
   onBack: () => void;
