@@ -1,6 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { LocalSeoPage } from "@/components/local/LocalSeoPage";
 import { findCidade, CIDADES } from "@/data/locations";
+import { buildLocalFaq } from "@/data/localFaq";
 import { COMPANY_INFO } from "@/config/whatsappTemplate";
 
 export const Route = createFileRoute("/atendimento/$cidade")({
