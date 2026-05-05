@@ -57,6 +57,7 @@ const QUICK_ACTIONS = [
 
 export function AdminPanel({ onBack, onNavigate, onLogout, stats }: AdminPanelProps) {
   const [query, setQuery] = useState("");
+  const { user, isAdmin, signOut } = useAuth();
 
   const filteredModules = useMemo(() => {
     if (!query.trim()) return MODULES;
@@ -66,8 +67,9 @@ export function AdminPanel({ onBack, onNavigate, onLogout, stats }: AdminPanelPr
     );
   }, [query]);
 
-  const handleLogout = () => {
-    adminLogout();
+  const handleLogout = async () => {
+    await logAudit("admin.logout");
+    await signOut();
     toast.success("Sessão encerrada");
     onLogout();
   };
