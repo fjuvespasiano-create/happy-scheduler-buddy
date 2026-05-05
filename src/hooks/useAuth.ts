@@ -115,7 +115,7 @@ export async function logAudit(
       action,
       entity: opts?.entity ?? null,
       entity_id: opts?.entityId ?? null,
-      metadata: opts?.metadata ?? null,
+      metadata: (opts?.metadata ?? null) as never,
       user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
     });
   } catch {
