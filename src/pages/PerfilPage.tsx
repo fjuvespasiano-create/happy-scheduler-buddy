@@ -124,7 +124,7 @@ export function PerfilPage({ onBack, isDarkMode, onToggleTheme }: PerfilPageProp
           <LogOut className="h-5 w-5" /><span className="font-semibold">Sair da Conta</span>
         </button>
 
-        <p className="text-center text-xs text-muted-foreground">CleanPro Agenda v1.0.0</p>
+        <p className="text-center text-xs text-muted-foreground">Auto Limpeza Pro v1.0.0</p>
       </main>
     </div>
   );

@@ -44,7 +44,7 @@ export const Route = createRootRoute({
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { name: "theme-color", content: "#0ea5e9" },
-      { title: "CleanPro Agenda - Higienização, Estética Automotiva e Pós-Obra" },
+      { title: "Auto Limpeza Pro - Higienização, Estética Automotiva e Pós-Obra" },
       {
         name: "description",
         content:
@@ -52,8 +52,8 @@ export const Route = createRootRoute({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:title", content: "CleanPro Agenda - Higienização, Estética Automotiva e Pós-Obra" },
-      { name: "twitter:title", content: "CleanPro Agenda - Higienização, Estética Automotiva e Pós-Obra" },
+      { property: "og:title", content: "Auto Limpeza Pro - Higienização, Estética Automotiva e Pós-Obra" },
+      { name: "twitter:title", content: "Auto Limpeza Pro - Higienização, Estética Automotiva e Pós-Obra" },
       { name: "description", content: "Friendly Scheduler is a web application for managing appointments and bookings." },
       { property: "og:description", content: "Friendly Scheduler is a web application for managing appointments and bookings." },
       { name: "twitter:description", content: "Friendly Scheduler is a web application for managing appointments and bookings." },
