@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, Sofa, Bed, Car, CarFront, HardHat, Armchair, MapPin, CalendarDays, Clock, Sparkles, Phone, User, Camera, X, MessageCircle, Baby, BedDouble, Utensils, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import type { Appointment } from "@/hooks/useAppState";
 import type { CustomerLocation } from "@/hooks/useCustomerLocation";
+
+const SITE_LOGO_URL = `${typeof window !== "undefined" ? window.location.origin : ""}/mascote-auto-limpeza-pro.png`;
 
 interface SmartBookingWizardProps {
   onClose: () => void;
