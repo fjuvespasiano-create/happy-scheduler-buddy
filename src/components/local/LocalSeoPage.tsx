@@ -1,7 +1,14 @@
 import { Link } from "@tanstack/react-router";
-import { MapPin, Phone, MessageCircle, Sofa, Bed, Car, Sparkles, ShieldCheck, Star, Check, ArrowLeft } from "lucide-react";
+import { MapPin, Phone, MessageCircle, Sofa, Bed, Car, Sparkles, ShieldCheck, Star, Check, ArrowLeft, HelpCircle } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { COMPANY_INFO } from "@/config/whatsappTemplate";
 import type { Cidade } from "@/data/locations";
+import { buildLocalFaq } from "@/data/localFaq";
 
 interface LocalSeoPageProps {
   cidade: Cidade;
