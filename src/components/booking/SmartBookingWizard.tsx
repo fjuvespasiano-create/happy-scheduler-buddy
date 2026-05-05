@@ -803,9 +803,10 @@ export function SmartBookingWizard({ onClose, onConfirm, initialServiceId, custo
           <div className="space-y-2">
             <button
               onClick={handleConfirm}
-              className="w-full h-14 rounded-2xl bg-[#25D366] text-white font-bold flex items-center justify-center gap-2 shadow-salon-lg active:scale-[0.98] transition-all"
+              disabled={sending}
+              className="w-full h-14 rounded-2xl bg-[#25D366] text-white font-bold flex items-center justify-center gap-2 shadow-salon-lg active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <MessageCircle className="h-5 w-5" /> Enviar orçamento pelo WhatsApp
+              <MessageCircle className="h-5 w-5" /> {sending ? "Enviando foto..." : "Enviar orçamento pelo WhatsApp"}
             </button>
             <button
               onClick={handleAddToCalendar}
