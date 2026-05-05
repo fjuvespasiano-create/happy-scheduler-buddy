@@ -10,33 +10,52 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AtendimentoCidadeRouteImport } from './routes/atendimento.$cidade'
+import { Route as AtendimentoCidadeBairroRouteImport } from './routes/atendimento.$cidade.$bairro'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AtendimentoCidadeRoute = AtendimentoCidadeRouteImport.update({
+  id: '/atendimento/$cidade',
+  path: '/atendimento/$cidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AtendimentoCidadeBairroRoute = AtendimentoCidadeBairroRouteImport.update({
+  id: '/$bairro',
+  path: '/$bairro',
+  getParentRoute: () => AtendimentoCidadeRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/atendimento/$cidade': typeof AtendimentoCidadeRouteWithChildren
+  '/atendimento/$cidade/$bairro': typeof AtendimentoCidadeBairroRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/atendimento/$cidade': typeof AtendimentoCidadeRouteWithChildren
+  '/atendimento/$cidade/$bairro': typeof AtendimentoCidadeBairroRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/atendimento/$cidade': typeof AtendimentoCidadeRouteWithChildren
+  '/atendimento/$cidade/$bairro': typeof AtendimentoCidadeBairroRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/atendimento/$cidade' | '/atendimento/$cidade/$bairro'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/atendimento/$cidade' | '/atendimento/$cidade/$bairro'
+  id: '__root__' | '/' | '/atendimento/$cidade' | '/atendimento/$cidade/$bairro'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AtendimentoCidadeRoute: typeof AtendimentoCidadeRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,12 +67,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/atendimento/$cidade': {
+      id: '/atendimento/$cidade'
+      path: '/atendimento/$cidade'
+      fullPath: '/atendimento/$cidade'
+      preLoaderRoute: typeof AtendimentoCidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/atendimento/$cidade/$bairro': {
+      id: '/atendimento/$cidade/$bairro'
+      path: '/$bairro'
+      fullPath: '/atendimento/$cidade/$bairro'
+      preLoaderRoute: typeof AtendimentoCidadeBairroRouteImport
+      parentRoute: typeof AtendimentoCidadeRoute
+    }
   }
 }
 
+interface AtendimentoCidadeRouteChildren {
+  AtendimentoCidadeBairroRoute: typeof AtendimentoCidadeBairroRoute
+}
+
+const AtendimentoCidadeRouteChildren: AtendimentoCidadeRouteChildren = {
+  AtendimentoCidadeBairroRoute: AtendimentoCidadeBairroRoute,
+}
+
+const AtendimentoCidadeRouteWithChildren =
+  AtendimentoCidadeRoute._addFileChildren(AtendimentoCidadeRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AtendimentoCidadeRoute: AtendimentoCidadeRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
