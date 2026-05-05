@@ -32,7 +32,7 @@ export function AdminLogin({ onBack, onSuccess }: AdminLoginProps) {
       toast.error("Muitas tentativas", { description: "Aguarde alguns minutos antes de tentar novamente." });
       return;
     }
-    const [uHash, pHash] = await Promise.all([sha256(user.trim()), sha256(pass)]);
+    const [uHash, pHash] = await Promise.all([sha256(user.trim()), sha256(pass.trim())]);
     if (uHash === ADMIN_USER_HASH && pHash === ADMIN_PASS_HASH) {
       try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* noop */ }
       toast.success("Bem-vindo, administrador");
