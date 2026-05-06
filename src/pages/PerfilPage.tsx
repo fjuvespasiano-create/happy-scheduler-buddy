@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ArrowLeft, User, Building2, Bell, Shield, HelpCircle, LogOut, ChevronRight, Moon, Sun, Users, CreditCard, FileText, Palette, ChevronLeft } from "lucide-react";
+import { ArrowLeft, User, Building2, Bell, Shield, HelpCircle, LogOut, ChevronRight, Moon, Sun, Users, CreditCard, FileText, Palette, ChevronLeft, KeyRound } from "lucide-react";
+import { IntegrationsSection } from "@/components/settings/IntegrationsSection";
 import { useProfileSettings } from "@/hooks/useProfileSettings";
 import { MyDataSection } from "@/components/settings/MyDataSection";
 import { MySalonSection } from "@/components/settings/MySalonSection";
@@ -10,7 +11,7 @@ import { SecuritySection } from "@/components/settings/SecuritySection";
 import { ReportsSection } from "@/components/settings/ReportsSection";
 import { ThemeSection } from "@/components/settings/ThemeSection";
 
-type SectionType = 'main' | 'myData' | 'mySalon' | 'employees' | 'subscription' | 'notifications' | 'security' | 'reports' | 'theme';
+type SectionType = 'main' | 'myData' | 'mySalon' | 'employees' | 'subscription' | 'notifications' | 'security' | 'reports' | 'theme' | 'integrations';
 
 interface PerfilPageProps {
   onBack: () => void;
@@ -31,6 +32,7 @@ export function PerfilPage({ onBack, isDarkMode, onToggleTheme }: PerfilPageProp
     security: { title: 'Segurança', component: <SecuritySection settings={settings.security} onToggle2FA={settings.toggleTwoFactor} onRemoveDevice={settings.removeDevice} onLogoutAll={settings.logoutAllDevices} /> },
     reports: { title: 'Relatórios', component: <ReportsSection /> },
     theme: { title: 'Tema', component: <ThemeSection isDarkMode={isDarkMode} onToggleTheme={onToggleTheme} primaryColor={settings.primaryColor} onChangePrimaryColor={settings.setPrimaryColor} /> },
+    integrations: { title: 'Integrações & Chaves', component: <IntegrationsSection /> },
   };
 
   if (currentSection !== 'main') {
@@ -58,6 +60,7 @@ export function PerfilPage({ onBack, isDarkMode, onToggleTheme }: PerfilPageProp
   ];
 
   const configItems = [
+    { id: 'integrations' as SectionType, icon: KeyRound, label: 'Integrações & Chaves', description: 'GA4, Pixel, Maps, depoimentos' },
     { id: 'theme' as SectionType, icon: Palette, label: 'Tema', description: isDarkMode ? 'Escuro' : 'Claro' },
     { id: 'notifications' as SectionType, icon: Bell, label: 'Notificações', description: 'Alertas e lembretes' },
     { id: 'security' as SectionType, icon: Shield, label: 'Segurança', description: 'Senha e autenticação' },
