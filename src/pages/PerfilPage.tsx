@@ -11,7 +11,7 @@ import { SecuritySection } from "@/components/settings/SecuritySection";
 import { ReportsSection } from "@/components/settings/ReportsSection";
 import { ThemeSection } from "@/components/settings/ThemeSection";
 
-type SectionType = 'main' | 'myData' | 'mySalon' | 'employees' | 'subscription' | 'notifications' | 'security' | 'reports' | 'theme';
+type SectionType = 'main' | 'myData' | 'mySalon' | 'employees' | 'subscription' | 'notifications' | 'security' | 'reports' | 'theme' | 'integrations';
 
 interface PerfilPageProps {
   onBack: () => void;
