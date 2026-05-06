@@ -117,7 +117,7 @@ export function SmartHome({ onStartBooking, customerLocation, locationStatus, on
         <div className="grid grid-cols-3 gap-2 mt-4">
           <div className="flex flex-col items-center gap-1 p-3 rounded-xl bg-card border border-border">
             <ShieldCheck className="h-5 w-5 text-primary" />
-              <p className="text-[10px] font-medium text-foreground text-center">2.500+<br />clientes</p>
+              <p className="text-[10px] font-medium text-foreground text-center">+50<br />clientes</p>
           </div>
           <div className="flex flex-col items-center gap-1 p-3 rounded-xl bg-card border border-border">
             <Star className="h-5 w-5 text-warning" />
