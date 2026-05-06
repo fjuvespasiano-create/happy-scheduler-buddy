@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ArrowLeft, User, Building2, Bell, Shield, HelpCircle, LogOut, ChevronRight, Moon, Sun, Users, CreditCard, FileText, Palette, ChevronLeft } from "lucide-react";
+import { ArrowLeft, User, Building2, Bell, Shield, HelpCircle, LogOut, ChevronRight, Moon, Sun, Users, CreditCard, FileText, Palette, ChevronLeft, KeyRound } from "lucide-react";
+import { IntegrationsSection } from "@/components/settings/IntegrationsSection";
 import { useProfileSettings } from "@/hooks/useProfileSettings";
 import { MyDataSection } from "@/components/settings/MyDataSection";
 import { MySalonSection } from "@/components/settings/MySalonSection";
