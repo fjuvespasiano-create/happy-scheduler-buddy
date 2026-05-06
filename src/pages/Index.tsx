@@ -12,13 +12,14 @@ import { SmartBookingWizard } from "@/components/booking/SmartBookingWizard";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 import { AdminPanel } from "@/components/admin/AdminPanel";
 import { AuditLogPage } from "@/components/admin/AuditLogPage";
+import { BlogMediaPage } from "@/components/admin/BlogMediaPage";
 import { SubscriptionPlans } from "@/components/plans/SubscriptionPlans";
 import { SiteMapPage } from "@/pages/SiteMapPage";
 import { useAppState } from "@/hooks/useAppState";
 import { useCustomerLocation } from "@/hooks/useCustomerLocation";
 import { useAuth } from "@/hooks/useAuth";
 
-const ADMIN_ROUTES = new Set(["/admin", "/admin/auditoria", "/agenda", "/caixa", "/vendas", "/perfil", "/financas"]);
+const ADMIN_ROUTES = new Set(["/admin", "/admin/auditoria", "/admin/midia", "/agenda", "/caixa", "/vendas", "/perfil", "/financas"]);
 
 const Index = () => {
   const [currentPath, setCurrentPath] = useState("/");
@@ -116,6 +117,10 @@ const Index = () => {
 
   if (currentPath === "/admin/auditoria") {
     return <AuditLogPage onBack={() => setCurrentPath("/admin")} />;
+  }
+
+  if (currentPath === "/admin/midia") {
+    return <BlogMediaPage onBack={() => setCurrentPath("/admin")} />;
   }
 
   // ==================== ADMIN-ONLY ROUTES ====================
