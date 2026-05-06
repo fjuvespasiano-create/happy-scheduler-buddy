@@ -93,6 +93,7 @@ export const Route = createFileRoute("/blog/$slug")({
 function PostPage() {
   const { post } = Route.useLoaderData();
   const faq = postFaq(post);
+  const pares = usePublicPairs(post.slug);
   const cidade = post.cidadeSlug ? findCidade(post.cidadeSlug) : null;
   const servico = post.servicoSlug ? SERVICOS.find((s) => s.slug === post.servicoSlug) : null;
 
@@ -195,21 +196,41 @@ function PostPage() {
                 <p className="text-xs text-muted-foreground">Atendemos por ordem de chegada. Chame agora no WhatsApp e consulte horários disponíveis {cidade ? `em ${cidade.nome}` : "na sua região"}.</p>
               </div>
             );
-            if (b.tipo === "antesdepois") return (
-              <figure key={i} className="my-4">
-                <div className="grid grid-cols-2 gap-2 rounded-2xl overflow-hidden border border-border">
-                  <div className="aspect-square bg-gradient-to-br from-muted to-muted-foreground/20 flex flex-col items-center justify-center text-muted-foreground">
-                    <span className="text-3xl mb-1">📷</span>
-                    <span className="text-[10px] uppercase tracking-wide font-bold">Antes</span>
+            if (b.tipo === "antesdepois") {
+              if (pares.length > 0) {
+                return (
+                  <div key={i} className="my-4 space-y-4">
+                    {pares.map((p) => (
+                      p.antes && p.depois ? (
+                        <BeforeAfterSlider
+                          key={p.id}
+                          antesUrl={p.antes.url}
+                          depoisUrl={p.depois.url}
+                          antesAlt={p.antes.alt}
+                          depoisAlt={p.depois.alt}
+                          legenda={p.legenda || b.legenda}
+                        />
+                      ) : null
+                    ))}
                   </div>
-                  <div className="aspect-square bg-gradient-to-br from-emerald-500/20 to-primary/20 flex flex-col items-center justify-center text-foreground">
-                    <span className="text-3xl mb-1">✨</span>
-                    <span className="text-[10px] uppercase tracking-wide font-bold">Depois</span>
+                );
+              }
+              return (
+                <figure key={i} className="my-4">
+                  <div className="grid grid-cols-2 gap-2 rounded-2xl overflow-hidden border border-border">
+                    <div className="aspect-square bg-gradient-to-br from-muted to-muted-foreground/20 flex flex-col items-center justify-center text-muted-foreground">
+                      <span className="text-3xl mb-1">📷</span>
+                      <span className="text-[10px] uppercase tracking-wide font-bold">Antes</span>
+                    </div>
+                    <div className="aspect-square bg-gradient-to-br from-emerald-500/20 to-primary/20 flex flex-col items-center justify-center text-foreground">
+                      <span className="text-3xl mb-1">✨</span>
+                      <span className="text-[10px] uppercase tracking-wide font-bold">Depois</span>
+                    </div>
                   </div>
-                </div>
-                <figcaption className="text-[11px] text-muted-foreground text-center mt-2">{b.legenda ?? "Antes e depois — resultado real"}</figcaption>
-              </figure>
-            );
+                  <figcaption className="text-[11px] text-muted-foreground text-center mt-2">{b.legenda ?? "Galeria em breve — peça fotos no WhatsApp"}</figcaption>
+                </figure>
+              );
+            }
             return null;
           })}
         </div>
