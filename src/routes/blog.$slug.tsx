@@ -10,6 +10,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { usePublicPairs } from "@/hooks/useBlogMedia";
+import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
 
 const SITE = "https://happy-scheduler-buddy.lovable.app";
 
