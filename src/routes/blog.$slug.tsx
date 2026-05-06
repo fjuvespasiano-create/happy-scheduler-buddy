@@ -1,6 +1,8 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
-import { ArrowLeft, Clock, MessageCircle } from "lucide-react";
+import { ArrowLeft, Clock, MessageCircle, ChevronRight } from "lucide-react";
 import { findPost, POSTS } from "@/data/blog";
+import { SERVICOS } from "@/data/servicos";
+import { CIDADES } from "@/data/locations";
 import { COMPANY_INFO } from "@/config/whatsappTemplate";
 
 export const Route = createFileRoute("/blog/$slug")({
