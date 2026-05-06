@@ -12,8 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ServicosIndexRouteImport } from './routes/servicos.index'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as AtendimentoIndexRouteImport } from './routes/atendimento.index'
+import { Route as ServicosServicoRouteImport } from './routes/servicos.$servico'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AtendimentoCidadeRouteImport } from './routes/atendimento.$cidade'
+import { Route as ServicosServicoCidadeRouteImport } from './routes/servicos.$servico.$cidade'
 import { Route as AtendimentoCidadeBairroRouteImport } from './routes/atendimento.$cidade.$bairro'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -31,15 +36,40 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicosIndexRoute = ServicosIndexRouteImport.update({
+  id: '/servicos/',
+  path: '/servicos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AtendimentoIndexRoute = AtendimentoIndexRouteImport.update({
   id: '/atendimento/',
   path: '/atendimento/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicosServicoRoute = ServicosServicoRouteImport.update({
+  id: '/servicos/$servico',
+  path: '/servicos/$servico',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AtendimentoCidadeRoute = AtendimentoCidadeRouteImport.update({
   id: '/atendimento/$cidade',
   path: '/atendimento/$cidade',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ServicosServicoCidadeRoute = ServicosServicoCidadeRouteImport.update({
+  id: '/$cidade',
+  path: '/$cidade',
+  getParentRoute: () => ServicosServicoRoute,
 } as any)
 const AtendimentoCidadeBairroRoute = AtendimentoCidadeBairroRouteImport.update({
   id: '/$bairro',
@@ -52,16 +82,26 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/atendimento/$cidade': typeof AtendimentoCidadeRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
+  '/servicos/$servico': typeof ServicosServicoRouteWithChildren
   '/atendimento/': typeof AtendimentoIndexRoute
+  '/blog/': typeof BlogIndexRoute
+  '/servicos/': typeof ServicosIndexRoute
   '/atendimento/$cidade/$bairro': typeof AtendimentoCidadeBairroRoute
+  '/servicos/$servico/$cidade': typeof ServicosServicoCidadeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/atendimento/$cidade': typeof AtendimentoCidadeRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
+  '/servicos/$servico': typeof ServicosServicoRouteWithChildren
   '/atendimento': typeof AtendimentoIndexRoute
+  '/blog': typeof BlogIndexRoute
+  '/servicos': typeof ServicosIndexRoute
   '/atendimento/$cidade/$bairro': typeof AtendimentoCidadeBairroRoute
+  '/servicos/$servico/$cidade': typeof ServicosServicoCidadeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -69,8 +109,13 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/atendimento/$cidade': typeof AtendimentoCidadeRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
+  '/servicos/$servico': typeof ServicosServicoRouteWithChildren
   '/atendimento/': typeof AtendimentoIndexRoute
+  '/blog/': typeof BlogIndexRoute
+  '/servicos/': typeof ServicosIndexRoute
   '/atendimento/$cidade/$bairro': typeof AtendimentoCidadeBairroRoute
+  '/servicos/$servico/$cidade': typeof ServicosServicoCidadeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -79,24 +124,39 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sitemap.xml'
     | '/atendimento/$cidade'
+    | '/blog/$slug'
+    | '/servicos/$servico'
     | '/atendimento/'
+    | '/blog/'
+    | '/servicos/'
     | '/atendimento/$cidade/$bairro'
+    | '/servicos/$servico/$cidade'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/reset-password'
     | '/sitemap.xml'
     | '/atendimento/$cidade'
+    | '/blog/$slug'
+    | '/servicos/$servico'
     | '/atendimento'
+    | '/blog'
+    | '/servicos'
     | '/atendimento/$cidade/$bairro'
+    | '/servicos/$servico/$cidade'
   id:
     | '__root__'
     | '/'
     | '/reset-password'
     | '/sitemap.xml'
     | '/atendimento/$cidade'
+    | '/blog/$slug'
+    | '/servicos/$servico'
     | '/atendimento/'
+    | '/blog/'
+    | '/servicos/'
     | '/atendimento/$cidade/$bairro'
+    | '/servicos/$servico/$cidade'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -104,7 +164,11 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AtendimentoCidadeRoute: typeof AtendimentoCidadeRouteWithChildren
+  BlogSlugRoute: typeof BlogSlugRoute
+  ServicosServicoRoute: typeof ServicosServicoRouteWithChildren
   AtendimentoIndexRoute: typeof AtendimentoIndexRoute
+  BlogIndexRoute: typeof BlogIndexRoute
+  ServicosIndexRoute: typeof ServicosIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -130,11 +194,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/servicos/': {
+      id: '/servicos/'
+      path: '/servicos'
+      fullPath: '/servicos/'
+      preLoaderRoute: typeof ServicosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/atendimento/': {
       id: '/atendimento/'
       path: '/atendimento'
       fullPath: '/atendimento/'
       preLoaderRoute: typeof AtendimentoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/servicos/$servico': {
+      id: '/servicos/$servico'
+      path: '/servicos/$servico'
+      fullPath: '/servicos/$servico'
+      preLoaderRoute: typeof ServicosServicoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/atendimento/$cidade': {
@@ -143,6 +235,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/atendimento/$cidade'
       preLoaderRoute: typeof AtendimentoCidadeRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/servicos/$servico/$cidade': {
+      id: '/servicos/$servico/$cidade'
+      path: '/$cidade'
+      fullPath: '/servicos/$servico/$cidade'
+      preLoaderRoute: typeof ServicosServicoCidadeRouteImport
+      parentRoute: typeof ServicosServicoRoute
     }
     '/atendimento/$cidade/$bairro': {
       id: '/atendimento/$cidade/$bairro'
@@ -165,13 +264,38 @@ const AtendimentoCidadeRouteChildren: AtendimentoCidadeRouteChildren = {
 const AtendimentoCidadeRouteWithChildren =
   AtendimentoCidadeRoute._addFileChildren(AtendimentoCidadeRouteChildren)
 
+interface ServicosServicoRouteChildren {
+  ServicosServicoCidadeRoute: typeof ServicosServicoCidadeRoute
+}
+
+const ServicosServicoRouteChildren: ServicosServicoRouteChildren = {
+  ServicosServicoCidadeRoute: ServicosServicoCidadeRoute,
+}
+
+const ServicosServicoRouteWithChildren = ServicosServicoRoute._addFileChildren(
+  ServicosServicoRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AtendimentoCidadeRoute: AtendimentoCidadeRouteWithChildren,
+  BlogSlugRoute: BlogSlugRoute,
+  ServicosServicoRoute: ServicosServicoRouteWithChildren,
   AtendimentoIndexRoute: AtendimentoIndexRoute,
+  BlogIndexRoute: BlogIndexRoute,
+  ServicosIndexRoute: ServicosIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
