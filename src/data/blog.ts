@@ -4,9 +4,13 @@ import { SERVICOS, type Servico } from "./servicos";
 export type PostTipo = "A" | "B" | "C" | "manual";
 
 export interface PostBloco {
-  tipo: "h2" | "p" | "ul" | "cta";
+  tipo: "h2" | "p" | "ul" | "cta" | "humano" | "prova" | "urgencia" | "antesdepois";
   texto?: string;
   itens?: string[];
+  // antesdepois
+  antes?: string;
+  depois?: string;
+  legenda?: string;
 }
 
 export interface Post {
@@ -147,8 +151,10 @@ function gerarTipoA(servico: Servico, cidade: Cidade, bairro: { slug: string; no
       `${servico.nomeCurto.toLowerCase()} perto de mim`,
     ],
     conteudo: [
-      { tipo: "p", texto: `Se você mora no ${bairro.nome}, em ${cidade.nome}, e quer ${servico.nome.toLowerCase()} sem dor de cabeça, atendemos sua rua. Orçamento gratuito pelo WhatsApp e agendamento, em muitos casos, no mesmo dia.` },
+      { tipo: "humano", texto: `Se você está no ${bairro.nome}, em ${cidade.nome}, e seu ${servico.nomeCurto.toLowerCase()} está com cheiro ruim, manchas ou aspecto envelhecido, nosso atendimento chega rápido até a sua rua. Já atendemos vizinhos seus por aqui — e a maioria já marcou para o mesmo dia.` },
+      { tipo: "prova" },
       { tipo: "cta" },
+      { tipo: "antesdepois", legenda: `${servico.nome} no ${bairro.nome} — antes e depois` },
       { tipo: "h2", texto: `Por que contratar ${servico.nomeCurto.toLowerCase()} profissional no ${bairro.nome}` },
       { tipo: "ul", itens: servico.beneficios },
       { tipo: "h2", texto: `Problemas que resolvemos no ${bairro.nome}` },
@@ -157,6 +163,7 @@ function gerarTipoA(servico: Servico, cidade: Cidade, bairro: { slug: string; no
       { tipo: "ul", itens: servico.processo.map((p) => `${p.titulo} — ${p.desc}`) },
       { tipo: "h2", texto: `Quanto custa ${servico.nomeCurto.toLowerCase()} no ${bairro.nome}` },
       { tipo: "p", texto: `${servico.precoBase}. O valor final depende do tamanho, tecido e nível de sujeira. Mande uma foto pelo WhatsApp e enviamos o preço exato em minutos — sem compromisso.` },
+      { tipo: "urgencia" },
       { tipo: "h2", texto: `Bairros próximos que também atendemos em ${cidade.nome}` },
       { tipo: "ul", itens: vizinhos.map((b) => b.nome) },
       { tipo: "h2", texto: "Use o cupom LIMPA15" },
@@ -186,12 +193,15 @@ function gerarTipoB(problema: typeof PROBLEMAS[number], cidade: Cidade): Post {
       `como resolver ${problema.titulo}`,
     ],
     conteudo: [
-      { tipo: "p", texto: `${problema.h1} é um problema comum em ${cidade.nome} — e raramente resolvido com receita caseira. Veja por quê e qual o caminho que realmente funciona.` },
+      { tipo: "humano", texto: `${problema.h1} é mais comum do que parece em ${cidade.nome} — quem mora aqui sabe que o clima úmido piora tudo. A boa notícia: tem solução real, e ela não envolve receita caseira nem perfume.` },
+      { tipo: "prova" },
       { tipo: "cta" },
+      { tipo: "antesdepois", legenda: `${problema.h1} em ${cidade.nome} — resultado real` },
       { tipo: "h2", texto: "Por que o problema volta sempre" },
       { tipo: "p", texto: "A maioria das soluções caseiras só mascara: perfume, pano úmido, álcool. O que está fundo no tecido continua lá e reativa com o calor e a umidade." },
       { tipo: "h2", texto: "O que realmente resolve" },
       { tipo: "ul", itens: servico.processo.map((p) => `${p.titulo} — ${p.desc}`) },
+      { tipo: "urgencia" },
       { tipo: "h2", texto: `Atendemos ${cidade.nome} no mesmo dia` },
       { tipo: "ul", itens: cidade.bairros.slice(0, 8).map((b) => b.nome) },
       { tipo: "cta" },
