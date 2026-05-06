@@ -60,6 +60,7 @@ export function PerfilPage({ onBack, isDarkMode, onToggleTheme }: PerfilPageProp
   ];
 
   const configItems = [
+    { id: 'integrations' as SectionType, icon: KeyRound, label: 'Integrações & Chaves', description: 'GA4, Pixel, Maps, depoimentos' },
     { id: 'theme' as SectionType, icon: Palette, label: 'Tema', description: isDarkMode ? 'Escuro' : 'Claro' },
     { id: 'notifications' as SectionType, icon: Bell, label: 'Notificações', description: 'Alertas e lembretes' },
     { id: 'security' as SectionType, icon: Shield, label: 'Segurança', description: 'Senha e autenticação' },
