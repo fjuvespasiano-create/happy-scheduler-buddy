@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { registerPWA } from "@/lib/pwa";
+import { WhatsAppFab } from "@/components/WhatsAppFab";
 
 import appCss from "../styles.css?url";
 
@@ -97,6 +98,7 @@ function RootComponent() {
         <Toaster />
         <Sonner />
         <Outlet />
+        <WhatsAppFab />
       </TooltipProvider>
     </QueryClientProvider>
   );

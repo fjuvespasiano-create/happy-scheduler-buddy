@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, MessageCircle, Phone, Check, ShieldCheck, Star, Clock, MapPin, AlertCircle, HelpCircle, Sparkles } from "lucide-react";
+import { ArrowLeft, MessageCircle, Phone, Check, ShieldCheck, Star, Clock, MapPin, AlertCircle, HelpCircle, Sparkles, Tag } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -9,16 +9,20 @@ import {
 import { COMPANY_INFO } from "@/config/whatsappTemplate";
 import type { Servico } from "@/data/servicos";
 import type { Cidade } from "@/data/locations";
+import { TrustBadges } from "@/components/TrustBadges";
+import { BeforeAfterGallery } from "@/components/BeforeAfterGallery";
 
 interface ServicoPageProps {
   servico: Servico;
   cidade?: Cidade;
+  bairro?: { slug: string; nome: string };
 }
 
-export function ServicoPage({ servico, cidade }: ServicoPageProps) {
-  const local = cidade ? `${cidade.nome} - ${cidade.estadoSigla}` : undefined;
+export function ServicoPage({ servico, cidade, bairro }: ServicoPageProps) {
+  const localCurto = bairro && cidade ? `${bairro.nome}, ${cidade.nome}` : cidade?.nome;
+  const localCompleto = cidade ? `${bairro ? bairro.nome + ", " : ""}${cidade.nome} - ${cidade.estadoSigla}` : undefined;
   const wppMsg = encodeURIComponent(
-    `Olá! Quero um orçamento de ${servico.nome}${local ? ` em ${cidade?.nome}` : ""}.`,
+    `Olá! Quero um orçamento de ${servico.nome}${localCurto ? ` em ${localCurto}` : ""}. Aproveitar o cupom *LIMPA15* (15% off na 1ª higienização).`,
   );
   const wppUrl = `https://wa.me/${COMPANY_INFO.whatsapp}?text=${wppMsg}`;
 
@@ -32,21 +36,32 @@ export function ServicoPage({ servico, cidade }: ServicoPageProps) {
           <div className="flex-1 min-w-0">
             <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Serviço</p>
             <h1 className="text-base font-bold text-foreground truncate">
-              {servico.nomeCurto}{local ? ` • ${cidade?.nome}` : ""}
+              {servico.nomeCurto}{localCurto ? ` • ${localCurto}` : ""}
             </h1>
           </div>
         </div>
       </header>
 
+      {/* Cupom banner */}
+      <div className="px-4 pt-4">
+        <div className="rounded-2xl bg-yellow-400/15 border border-yellow-500/40 px-4 py-3 flex items-center gap-3">
+          <Tag className="h-5 w-5 text-yellow-700 dark:text-yellow-400 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold text-foreground">CUPOM <span className="font-mono">LIMPA15</span> — 15% OFF</p>
+            <p className="text-[11px] text-muted-foreground">Válido para a 1ª higienização. Vagas limitadas esta semana.</p>
+          </div>
+        </div>
+      </div>
+
       {/* Hero */}
-      <section className="px-4 pt-6">
+      <section className="px-4 pt-4">
         <div className="rounded-3xl gradient-primary text-primary-foreground p-6 shadow-salon">
           <div className="text-3xl mb-2" aria-hidden>{servico.emoji}</div>
           <h2 className="text-2xl font-extrabold leading-tight mb-2">
-            {servico.h1(cidade?.nome)}
+            {servico.h1(localCurto)}
           </h2>
           <p className="text-sm opacity-90 mb-4">
-            {COMPANY_INFO.slogan}. {local ? `Atendimento rápido em ${local}.` : `Atendemos ${COMPANY_INFO.regiao}.`}
+            {COMPANY_INFO.slogan}. {localCompleto ? `Atendimento rápido em ${localCompleto}.` : `Atendemos ${COMPANY_INFO.regiao}.`}
           </p>
           <div className="flex items-center gap-3 text-xs font-semibold mb-4 opacity-90">
             <span className="inline-flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-yellow-300 text-yellow-300" /> 4.9/5</span>
@@ -69,11 +84,11 @@ export function ServicoPage({ servico, cidade }: ServicoPageProps) {
         </div>
       </section>
 
-      {/* Problemas que resolvemos */}
+      {/* Problemas */}
       <section className="px-4 mt-8">
         <h3 className="font-bold text-foreground mb-3 flex items-center gap-2">
           <AlertCircle className="h-5 w-5 text-primary" />
-          Resolvemos esses problemas{local ? ` em ${cidade?.nome}` : ""}
+          Resolvemos esses problemas{localCurto ? ` em ${localCurto}` : ""}
         </h3>
         <ul className="space-y-2">
           {servico.problemas.map((p) => (
@@ -84,6 +99,8 @@ export function ServicoPage({ servico, cidade }: ServicoPageProps) {
           ))}
         </ul>
       </section>
+
+      <BeforeAfterGallery servico={servico.nomeCurto} />
 
       {/* Benefícios */}
       <section className="px-4 mt-8">
@@ -131,6 +148,8 @@ export function ServicoPage({ servico, cidade }: ServicoPageProps) {
         </div>
       </section>
 
+      <TrustBadges />
+
       {/* Prova social */}
       <section className="px-4 mt-8">
         <div className="rounded-3xl bg-card border border-border p-5">
@@ -141,7 +160,7 @@ export function ServicoPage({ servico, cidade }: ServicoPageProps) {
             <span className="text-sm font-bold text-foreground">4.9 / 5</span>
           </div>
           <p className="text-sm text-muted-foreground italic">
-            "Atendimento impecável{local ? ` em ${cidade?.nome}` : ""}. Profissionais educados, sofá ficou novo. Recomendo!" — Ana M.
+            "Atendimento impecável{localCurto ? ` em ${localCurto}` : ""}. Profissionais educados, sofá ficou novo. Recomendo!" — Ana M.
           </p>
         </div>
       </section>
@@ -167,19 +186,51 @@ export function ServicoPage({ servico, cidade }: ServicoPageProps) {
       {/* CTA final */}
       <section className="px-4 mt-8">
         <div className="rounded-3xl bg-emerald-500/10 border border-emerald-500/30 p-5 text-center">
-          <h3 className="font-bold text-foreground mb-1">Agende hoje{local ? ` em ${cidade?.nome}` : ""}</h3>
-          <p className="text-xs text-muted-foreground mb-3">⚡ Vagas limitadas para esta semana</p>
+          <h3 className="font-bold text-foreground mb-1">Agende hoje{localCurto ? ` em ${localCurto}` : ""}</h3>
+          <p className="text-xs text-muted-foreground mb-3">⚡ Vagas limitadas para esta semana • Cupom LIMPA15 ativo</p>
           <a href={wppUrl} target="_blank" rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-emerald-500 text-white font-bold">
             <MessageCircle className="h-5 w-5" /> Pedir orçamento agora
           </a>
-          {local && (
+          {localCompleto && (
             <p className="text-[11px] text-muted-foreground mt-3 inline-flex items-center gap-1 justify-center">
-              <MapPin className="h-3 w-3" /> Atendendo {local} hoje
+              <MapPin className="h-3 w-3" /> Atendendo {localCompleto} hoje
             </p>
           )}
         </div>
       </section>
+
+      {/* Bairros relacionados (se em cidade) */}
+      {cidade && !bairro && (
+        <section className="px-4 mt-8">
+          <h3 className="font-bold text-foreground mb-3">{servico.nomeCurto} por bairro em {cidade.nome}</h3>
+          <div className="flex flex-wrap gap-2">
+            {cidade.bairros.map((b) => (
+              <Link
+                key={b.slug}
+                to="/servicos/$servico/$cidade/$bairro"
+                params={{ servico: servico.slug, cidade: cidade.slug, bairro: b.slug }}
+                className="px-3 py-1.5 rounded-full bg-muted text-foreground text-xs font-semibold hover:bg-primary/10"
+              >
+                {b.nome}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Voltar para cidade (se em bairro) */}
+      {cidade && bairro && (
+        <section className="px-4 mt-8">
+          <Link
+            to="/servicos/$servico/$cidade"
+            params={{ servico: servico.slug, cidade: cidade.slug }}
+            className="text-sm font-semibold text-primary"
+          >
+            ← Ver {servico.nomeCurto} em toda {cidade.nome}
+          </Link>
+        </section>
+      )}
     </div>
   );
 }

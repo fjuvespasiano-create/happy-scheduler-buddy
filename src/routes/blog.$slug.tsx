@@ -1,6 +1,8 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
-import { ArrowLeft, Clock, MessageCircle } from "lucide-react";
+import { ArrowLeft, Clock, MessageCircle, ChevronRight } from "lucide-react";
 import { findPost, POSTS } from "@/data/blog";
+import { SERVICOS } from "@/data/servicos";
+import { CIDADES } from "@/data/locations";
 import { COMPANY_INFO } from "@/config/whatsappTemplate";
 
 export const Route = createFileRoute("/blog/$slug")({
@@ -98,6 +100,43 @@ function PostPage() {
           })}
         </div>
       </article>
+
+      {/* Link interno: serviço relacionado */}
+      {(() => {
+        const map: Record<string, string> = {
+          "Sofá": "higienizacao-de-sofa",
+          "Colchão": "higienizacao-de-colchao",
+          "Automotiva": "higienizacao-automotiva-interna",
+          "Pós-Obra": "limpeza-pos-obra",
+          "Impermeabilização": "impermeabilizacao-de-estofados",
+          "Preços": "higienizacao-de-sofa",
+        };
+        const slug = map[post.categoria];
+        const servico = SERVICOS.find((s) => s.slug === slug);
+        if (!servico) return null;
+        return (
+          <section className="px-4 mt-10">
+            <div className="rounded-2xl bg-primary/5 border border-primary/20 p-5">
+              <p className="text-[10px] uppercase tracking-wide text-primary font-bold mb-1">Serviço relacionado</p>
+              <h3 className="font-bold text-foreground mb-1">{servico.emoji} {servico.nome}</h3>
+              <p className="text-xs text-muted-foreground mb-3">{servico.precoBase} • {servico.duracao}</p>
+              <div className="flex flex-wrap gap-2">
+                <Link to="/servicos/$servico" params={{ servico: servico.slug }}
+                  className="px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-semibold inline-flex items-center gap-1">
+                  Ver serviço completo <ChevronRight className="h-3 w-3" />
+                </Link>
+                {CIDADES.map((c) => (
+                  <Link key={c.slug} to="/servicos/$servico/$cidade"
+                    params={{ servico: servico.slug, cidade: c.slug }}
+                    className="px-3 py-1.5 rounded-full bg-muted text-foreground text-xs font-semibold hover:bg-primary/10">
+                    {c.nome}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
 
       {relacionados.length > 0 && (
         <section className="px-4 mt-10">
