@@ -155,7 +155,7 @@ function PostPage() {
         </a>
 
         <div className="space-y-4">
-          {post.conteudo.map((b, i) => {
+          {post.conteudo.map((b: typeof post.conteudo[number], i: number) => {
             if (b.tipo === "h2") return <h3 key={i} className="text-lg font-bold text-foreground mt-4">{b.texto}</h3>;
             if (b.tipo === "p") return <p key={i} className="text-sm text-foreground leading-relaxed">{b.texto}</p>;
             if (b.tipo === "ul") return (
