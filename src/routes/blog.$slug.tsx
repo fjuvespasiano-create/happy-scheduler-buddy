@@ -76,12 +76,12 @@ function PostPage() {
         <p className="text-sm text-muted-foreground mb-6">{post.resumo}</p>
 
         <div className="space-y-4">
-          {post.conteudo.map((b, i) => {
+          {post.conteudo.map((b: typeof post.conteudo[number], i: number) => {
             if (b.tipo === "h2") return <h3 key={i} className="text-lg font-bold text-foreground mt-4">{b.texto}</h3>;
             if (b.tipo === "p") return <p key={i} className="text-sm text-foreground leading-relaxed">{b.texto}</p>;
             if (b.tipo === "ul") return (
               <ul key={i} className="space-y-1.5 text-sm text-foreground list-disc pl-5">
-                {b.itens?.map((it) => <li key={it}>{it}</li>)}
+                {b.itens?.map((it: string) => <li key={it}>{it}</li>)}
               </ul>
             );
             if (b.tipo === "cta") return (
