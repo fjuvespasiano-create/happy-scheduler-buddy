@@ -175,6 +175,39 @@ function PostPage() {
                 </a>
               </div>
             );
+            if (b.tipo === "humano") return (
+              <p key={i} className="text-sm text-foreground leading-relaxed border-l-4 border-primary/40 pl-4 italic">{b.texto}</p>
+            );
+            if (b.tipo === "prova") return (
+              <div key={i} className="rounded-2xl bg-amber-500/10 border border-amber-500/30 p-4 flex items-start gap-3 my-2">
+                <span className="text-2xl">⭐</span>
+                <div>
+                  <p className="font-bold text-foreground text-sm">Mais de 500 atendimentos na região</p>
+                  <p className="text-xs text-muted-foreground">Avaliação média 4.9 ★ no WhatsApp e indicação de vizinhos. Equipe uniformizada e treinada.</p>
+                </div>
+              </div>
+            );
+            if (b.tipo === "urgencia") return (
+              <div key={i} className="rounded-2xl bg-destructive/10 border border-destructive/30 p-4 my-2">
+                <p className="font-bold text-foreground text-sm mb-1">⏰ Agenda limitada esta semana</p>
+                <p className="text-xs text-muted-foreground">Atendemos por ordem de chegada. Chame agora no WhatsApp e consulte horários disponíveis {cidade ? `em ${cidade.nome}` : "na sua região"}.</p>
+              </div>
+            );
+            if (b.tipo === "antesdepois") return (
+              <figure key={i} className="my-4">
+                <div className="grid grid-cols-2 gap-2 rounded-2xl overflow-hidden border border-border">
+                  <div className="aspect-square bg-gradient-to-br from-muted to-muted-foreground/20 flex flex-col items-center justify-center text-muted-foreground">
+                    <span className="text-3xl mb-1">📷</span>
+                    <span className="text-[10px] uppercase tracking-wide font-bold">Antes</span>
+                  </div>
+                  <div className="aspect-square bg-gradient-to-br from-emerald-500/20 to-primary/20 flex flex-col items-center justify-center text-foreground">
+                    <span className="text-3xl mb-1">✨</span>
+                    <span className="text-[10px] uppercase tracking-wide font-bold">Depois</span>
+                  </div>
+                </div>
+                <figcaption className="text-[11px] text-muted-foreground text-center mt-2">{b.legenda ?? "Antes e depois — resultado real"}</figcaption>
+              </figure>
+            );
             return null;
           })}
         </div>
