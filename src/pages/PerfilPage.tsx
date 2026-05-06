@@ -32,6 +32,7 @@ export function PerfilPage({ onBack, isDarkMode, onToggleTheme }: PerfilPageProp
     security: { title: 'Segurança', component: <SecuritySection settings={settings.security} onToggle2FA={settings.toggleTwoFactor} onRemoveDevice={settings.removeDevice} onLogoutAll={settings.logoutAllDevices} /> },
     reports: { title: 'Relatórios', component: <ReportsSection /> },
     theme: { title: 'Tema', component: <ThemeSection isDarkMode={isDarkMode} onToggleTheme={onToggleTheme} primaryColor={settings.primaryColor} onChangePrimaryColor={settings.setPrimaryColor} /> },
+    integrations: { title: 'Integrações & Chaves', component: <IntegrationsSection /> },
   };
 
   if (currentSection !== 'main') {
