@@ -227,7 +227,8 @@ function gerarTipoC(servico: Servico, cidade: Cidade): Post {
       `valor ${servico.nomeCurto.toLowerCase()} ${cidade.nome}`,
     ],
     conteudo: [
-      { tipo: "p", texto: `Quem busca ${servico.nome.toLowerCase()} em ${cidade.nome} costuma ter dúvida sobre o preço. Aqui vai a faixa real, do menor ao maior.` },
+      { tipo: "humano", texto: `Quem busca ${servico.nome.toLowerCase()} em ${cidade.nome} quer transparência: quanto vai custar e o que está incluso. Aqui vai sem enrolação.` },
+      { tipo: "prova" },
       { tipo: "h2", texto: "O que muda no valor" },
       { tipo: "ul", itens: [
         "Tamanho/quantidade de peças",
@@ -238,6 +239,7 @@ function gerarTipoC(servico: Servico, cidade: Cidade): Post {
       ]},
       { tipo: "h2", texto: "Faixa média" },
       { tipo: "p", texto: `${servico.precoBase}. Para um orçamento exato em ${cidade.nome}, mande uma foto no WhatsApp.` },
+      { tipo: "urgencia" },
       { tipo: "cta" },
     ],
   };
