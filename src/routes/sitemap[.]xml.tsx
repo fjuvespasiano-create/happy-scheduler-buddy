@@ -11,6 +11,8 @@ export const Route = createFileRoute("/sitemap.xml")({
       GET: () => {
         const urls: string[] = [
           `${SITE}/`,
+          `${SITE}/sobre`,
+          `${SITE}/contato`,
           `${SITE}/atendimento`,
           `${SITE}/servicos`,
           `${SITE}/blog`,
@@ -19,6 +21,9 @@ export const Route = createFileRoute("/sitemap.xml")({
           urls.push(`${SITE}/servicos/${s.slug}`);
           for (const c of CIDADES) {
             urls.push(`${SITE}/servicos/${s.slug}/${c.slug}`);
+            for (const b of c.bairros) {
+              urls.push(`${SITE}/servicos/${s.slug}/${c.slug}/${b.slug}`);
+            }
           }
         }
         for (const c of CIDADES) {
