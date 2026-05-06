@@ -1,4 +1,7 @@
-import { ArrowLeft, MapPin, Phone, Sofa, Bed, Car, HardHat, Sparkles, Bell, Calendar, ShieldCheck, Star } from "lucide-react";
+import { ArrowLeft, MapPin, Phone, Sofa, Bed, Car, HardHat, Sparkles, Bell, Calendar, ShieldCheck, Star, BookOpen, ChevronRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { SERVICOS } from "@/data/servicos";
+import { POSTS } from "@/data/blog";
 import { useEffect } from "react";
 import { COMPANY_INFO } from "@/config/whatsappTemplate";
 import { requestNotificationPermission, getNotificationPermission } from "@/lib/pwa";
@@ -296,6 +299,56 @@ export function SiteMapPage({ onBack, onStartBooking }: SiteMapPageProps) {
                 </button>
               );
             })}
+          </div>
+        </section>
+
+        {/* Páginas de serviço SEO */}
+        <section>
+          <h3 className="text-base font-bold text-foreground mb-3">
+            Páginas de serviços
+          </h3>
+          <div className="grid grid-cols-1 gap-2">
+            {SERVICOS.map((s) => (
+              <Link
+                key={s.slug}
+                to="/servicos/$servico"
+                params={{ servico: s.slug }}
+                className="flex items-center gap-3 rounded-2xl bg-card border border-border p-3 hover:border-primary"
+              >
+                <span className="text-2xl" aria-hidden>{s.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-foreground">{s.nome}</p>
+                  <p className="text-[11px] text-muted-foreground">{s.precoBase}</p>
+                </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              </Link>
+            ))}
+            <Link to="/servicos" className="text-xs text-primary font-semibold mt-1">
+              Ver todos os serviços por cidade →
+            </Link>
+          </div>
+        </section>
+
+        {/* Blog */}
+        <section>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-primary" /> Dicas no blog
+            </h3>
+            <Link to="/blog" className="text-xs text-primary font-semibold">Ver tudo</Link>
+          </div>
+          <div className="space-y-2">
+            {POSTS.slice(0, 3).map((p) => (
+              <Link
+                key={p.slug}
+                to="/blog/$slug"
+                params={{ slug: p.slug }}
+                className="block rounded-2xl bg-card border border-border p-3 hover:border-primary"
+              >
+                <p className="text-[10px] uppercase tracking-wide text-primary font-bold">{p.categoria}</p>
+                <p className="text-sm font-semibold text-foreground">{p.titulo}</p>
+              </Link>
+            ))}
           </div>
         </section>
 
