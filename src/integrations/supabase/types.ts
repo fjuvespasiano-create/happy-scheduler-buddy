@@ -50,6 +50,102 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_media: {
+        Row: {
+          alt: string
+          bairro_slug: string | null
+          cidade_slug: string | null
+          created_at: string
+          created_by: string | null
+          height: number | null
+          id: string
+          kind: string
+          path: string
+          servico_slug: string | null
+          size_bytes: number | null
+          titulo: string
+          url: string
+          width: number | null
+        }
+        Insert: {
+          alt?: string
+          bairro_slug?: string | null
+          cidade_slug?: string | null
+          created_at?: string
+          created_by?: string | null
+          height?: number | null
+          id?: string
+          kind: string
+          path: string
+          servico_slug?: string | null
+          size_bytes?: number | null
+          titulo?: string
+          url: string
+          width?: number | null
+        }
+        Update: {
+          alt?: string
+          bairro_slug?: string | null
+          cidade_slug?: string | null
+          created_at?: string
+          created_by?: string | null
+          height?: number | null
+          id?: string
+          kind?: string
+          path?: string
+          servico_slug?: string | null
+          size_bytes?: number | null
+          titulo?: string
+          url?: string
+          width?: number | null
+        }
+        Relationships: []
+      }
+      blog_post_pairs: {
+        Row: {
+          antes_id: string
+          created_at: string
+          depois_id: string
+          id: string
+          legenda: string
+          posicao: number
+          post_slug: string
+        }
+        Insert: {
+          antes_id: string
+          created_at?: string
+          depois_id: string
+          id?: string
+          legenda?: string
+          posicao?: number
+          post_slug: string
+        }
+        Update: {
+          antes_id?: string
+          created_at?: string
+          depois_id?: string
+          id?: string
+          legenda?: string
+          posicao?: number
+          post_slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_post_pairs_antes_id_fkey"
+            columns: ["antes_id"]
+            isOneToOne: false
+            referencedRelation: "blog_media"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_post_pairs_depois_id_fkey"
+            columns: ["depois_id"]
+            isOneToOne: false
+            referencedRelation: "blog_media"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
