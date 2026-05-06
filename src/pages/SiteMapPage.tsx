@@ -345,7 +345,7 @@ export function SiteMapPage({ onBack, onStartBooking }: SiteMapPageProps) {
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li className="flex gap-2">
               <Star className="h-4 w-4 text-warning shrink-0 mt-0.5" />
-              <span>+2.500 clientes atendidos com nota 4.9/5.</span>
+              <span>Mais de 50 clientes atendidos com nota 4.9/5.</span>
             </li>
             <li className="flex gap-2">
               <ShieldCheck className="h-4 w-4 text-primary shrink-0 mt-0.5" />
