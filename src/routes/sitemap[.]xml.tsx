@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CIDADES } from "@/data/locations";
+import { SERVICOS } from "@/data/servicos";
+import { POSTS } from "@/data/blog";
 
 const SITE = "https://happy-scheduler-buddy.lovable.app";
 
@@ -7,12 +9,26 @@ export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: () => {
-        const urls: string[] = [`${SITE}/`, `${SITE}/atendimento`];
+        const urls: string[] = [
+          `${SITE}/`,
+          `${SITE}/atendimento`,
+          `${SITE}/servicos`,
+          `${SITE}/blog`,
+        ];
+        for (const s of SERVICOS) {
+          urls.push(`${SITE}/servicos/${s.slug}`);
+          for (const c of CIDADES) {
+            urls.push(`${SITE}/servicos/${s.slug}/${c.slug}`);
+          }
+        }
         for (const c of CIDADES) {
           urls.push(`${SITE}/atendimento/${c.slug}`);
           for (const b of c.bairros) {
             urls.push(`${SITE}/atendimento/${c.slug}/${b.slug}`);
           }
+        }
+        for (const p of POSTS) {
+          urls.push(`${SITE}/blog/${p.slug}`);
         }
         const today = new Date().toISOString().slice(0, 10);
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
