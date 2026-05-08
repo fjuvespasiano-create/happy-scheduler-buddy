@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/accordion";
 import { usePublicPairs } from "@/hooks/useBlogMedia";
 import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
+import { TestimonialsBlock } from "@/components/TestimonialsBlock";
 
 const SITE = "https://happy-scheduler-buddy.lovable.app";
 
