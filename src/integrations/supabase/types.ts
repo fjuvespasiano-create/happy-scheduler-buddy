@@ -146,6 +146,45 @@ export type Database = {
           },
         ]
       }
+      blog_testimonials: {
+        Row: {
+          bairro: string
+          cidade_slug: string | null
+          created_at: string
+          created_by: string | null
+          estrelas: number
+          id: string
+          nome: string
+          posicao: number
+          post_slug: string | null
+          texto: string
+        }
+        Insert: {
+          bairro?: string
+          cidade_slug?: string | null
+          created_at?: string
+          created_by?: string | null
+          estrelas?: number
+          id?: string
+          nome: string
+          posicao?: number
+          post_slug?: string | null
+          texto: string
+        }
+        Update: {
+          bairro?: string
+          cidade_slug?: string | null
+          created_at?: string
+          created_by?: string | null
+          estrelas?: number
+          id?: string
+          nome?: string
+          posicao?: number
+          post_slug?: string | null
+          texto?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
