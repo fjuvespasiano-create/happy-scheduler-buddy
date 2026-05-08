@@ -100,6 +100,7 @@ function RootComponent() {
         <Sonner />
         <Outlet />
         <WhatsAppFab />
+        <SplashScreen />
       </TooltipProvider>
     </QueryClientProvider>
   );
