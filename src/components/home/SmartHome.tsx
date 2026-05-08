@@ -83,7 +83,7 @@ export function SmartHome({ onStartBooking, customerLocation, locationStatus, on
             <img
               src={mascote}
               alt="Mascote Auto Limpeza Pro"
-              className="w-36 h-36 sm:w-40 sm:h-40 object-contain shrink-0 drop-shadow-[0_8px_20px_rgba(14,165,255,0.35)]"
+              className="w-[202px] h-[202px] sm:w-56 sm:h-56 object-contain shrink-0 drop-shadow-[0_8px_20px_rgba(14,165,255,0.35)]"
               loading="eager"
             />
           </div>

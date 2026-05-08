@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { registerPWA } from "@/lib/pwa";
 import { WhatsAppFab } from "@/components/WhatsAppFab";
+import { SplashScreen } from "@/components/SplashScreen";
 
 import appCss from "../styles.css?url";
 
@@ -99,6 +100,7 @@ function RootComponent() {
         <Sonner />
         <Outlet />
         <WhatsAppFab />
+        <SplashScreen />
       </TooltipProvider>
     </QueryClientProvider>
   );
