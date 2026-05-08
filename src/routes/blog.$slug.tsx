@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/accordion";
 import { usePublicPairs } from "@/hooks/useBlogMedia";
 import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
+import { TestimonialsBlock } from "@/components/TestimonialsBlock";
 
 const SITE = "https://happy-scheduler-buddy.lovable.app";
 
@@ -279,6 +280,7 @@ function PostPage() {
         </section>
       )}
 
+      <TestimonialsBlock postSlug={post.slug} />
       {cidade && (
         <section className="px-4 mt-6">
           <div className="rounded-2xl bg-card border border-border p-5">
