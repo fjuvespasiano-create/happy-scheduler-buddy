@@ -280,6 +280,7 @@ function PostPage() {
         </section>
       )}
 
+      <TestimonialsBlock postSlug={post.slug} />
       {cidade && (
         <section className="px-4 mt-6">
           <div className="rounded-2xl bg-card border border-border p-5">
