@@ -15,6 +15,7 @@ import {
   ChevronRight,
   ScrollText,
   Image as ImageIcon,
+  MessageSquareQuote,
 } from "lucide-react";
 import { AdminLayout } from "./AdminLayout";
 import { toast } from "sonner";
@@ -49,6 +50,7 @@ const MODULES = [
   { icon: BarChart3, label: "Finanças", desc: "Receitas e despesas", path: "/financas", tone: "bg-violet-500/10 text-violet-600" },
   { icon: User, label: "Empresa", desc: "Dados, equipe e ajustes", path: "/perfil", tone: "bg-cyan-500/10 text-cyan-600" },
   { icon: ImageIcon, label: "Mídia do blog", desc: "Antes/Depois e biblioteca", path: "/admin/midia", tone: "bg-pink-500/10 text-pink-600" },
+  { icon: MessageSquareQuote, label: "Depoimentos", desc: "Prova social por post", path: "/admin/depoimentos", tone: "bg-yellow-500/10 text-yellow-700" },
 ];
 
 const QUICK_ACTIONS = [
