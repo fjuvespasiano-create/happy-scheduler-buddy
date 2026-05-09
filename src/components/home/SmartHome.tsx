@@ -1,4 +1,5 @@
-import { Sparkles, Sofa, Bed, Car, CarFront, HardHat, Armchair, ArrowRight, Calendar, Clock, ShieldCheck, Star, Phone, MapPin, Baby, BedDouble, Utensils, LayoutDashboard, Map } from "lucide-react";
+import { Sparkles, Sofa, Bed, Car, CarFront, HardHat, Armchair, ArrowRight, Calendar, Clock, ShieldCheck, Star, Phone, MapPin, Baby, BedDouble, Utensils, LayoutDashboard, Map, BookOpen } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import type { CustomerLocation } from "@/hooks/useCustomerLocation";
 import { PlansHighlight } from "@/components/plans/PlansHighlight";
 import { NotificationsBanner } from "@/components/pwa/NotificationsBanner";
@@ -181,6 +182,25 @@ export function SmartHome({ onStartBooking, customerLocation, locationStatus, on
             </div>
           ))}
         </div>
+      </section>
+
+      {/* Blog: dicas e provas reais */}
+      <section className="px-5 mt-7">
+        <Link
+          to="/blog"
+          className="w-full flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-br from-primary/10 via-card to-accent/10 border border-primary/30 hover:border-primary/60 active:scale-[0.98] transition shadow-salon"
+        >
+          <div className="w-11 h-11 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+            <BookOpen className="h-5 w-5" />
+          </div>
+          <div className="flex-1 text-left min-w-0">
+            <p className="text-sm font-bold text-foreground">Blog & dicas locais</p>
+            <p className="text-[11px] text-muted-foreground">
+              Antes/depois, depoimentos e guias por bairro
+            </p>
+          </div>
+          <ArrowRight className="h-5 w-5 text-primary" />
+        </Link>
       </section>
 
       {/* Mapa do site (SEO + atalho) */}
