@@ -67,8 +67,8 @@ export function SmartHome({ onStartBooking, customerLocation, locationStatus, on
 
         {/* Hero com mascote */}
         <div className="relative mb-5 rounded-3xl bg-gradient-to-br from-primary/15 via-card to-accent/10 border border-primary/20 shadow-salon-lg overflow-hidden p-5 pb-3">
-          <div className="flex items-center gap-3">
-            <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <div className="flex-1 min-w-0 relative z-10">
               <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 border border-primary/30 px-2.5 py-1 mb-2">
                 <ShieldCheck className="h-3 w-3 text-primary" />
                 <span className="text-[10px] font-semibold text-primary">SJ Lapa, Vespasiano e região</span>
@@ -83,7 +83,7 @@ export function SmartHome({ onStartBooking, customerLocation, locationStatus, on
             <img
               src={mascote}
               alt="Mascote Auto Limpeza Pro"
-              className="w-[202px] h-[202px] sm:w-56 sm:h-56 object-contain shrink-0 drop-shadow-[0_8px_20px_rgba(14,165,255,0.35)]"
+              className="w-36 h-36 sm:w-48 sm:h-48 object-contain shrink-0 -mr-3 sm:mr-0 drop-shadow-[0_8px_20px_rgba(14,165,255,0.35)]"
               loading="eager"
             />
           </div>
