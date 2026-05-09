@@ -10,9 +10,9 @@ export function SplashScreen() {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReducedMotion(mq.matches);
 
-    // Splash bem rápido para não atrapalhar o carregamento
-    const showMs = mq.matches ? 350 : 600;
-    const fadeMs = 200;
+    // Splash mínimo: só um flash do mascote
+    const showMs = mq.matches ? 200 : 400;
+    const fadeMs = 150;
 
     const t1 = setTimeout(() => setFading(true), showMs);
     const t2 = setTimeout(() => setVisible(false), showMs + fadeMs);
