@@ -13,6 +13,7 @@ import {
 import { usePublicPairs } from "@/hooks/useBlogMedia";
 import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
 import { TestimonialsBlock } from "@/components/TestimonialsBlock";
+import { ShareButton } from "@/components/ShareButton";
 
 const SITE = "https://happy-scheduler-buddy.lovable.app";
 
@@ -62,6 +63,7 @@ export const Route = createFileRoute("/blog/$slug")({
         { "@type": "ListItem", position: 3, name: post.titulo, item: url },
       ],
     };
+    const ogImage = `${SITE}/icon-512.png`;
     return {
       meta: [
         { title: `${post.titulo} | ${COMPANY_INFO.nome}` },
@@ -71,6 +73,12 @@ export const Route = createFileRoute("/blog/$slug")({
         { property: "og:description", content: post.resumo },
         { property: "og:type", content: "article" },
         { property: "og:url", content: url },
+        { property: "og:image", content: ogImage },
+        { property: "og:site_name", content: COMPANY_INFO.nome },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: post.titulo },
+        { name: "twitter:description", content: post.resumo },
+        { name: "twitter:image", content: ogImage },
         { name: "robots", content: "index,follow" },
         { rel: "canonical", href: url } as never,
       ],
@@ -121,6 +129,11 @@ function PostPage() {
             <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Blog • {post.categoria}</p>
             <h1 className="text-sm font-bold text-foreground truncate">{post.titulo}</h1>
           </div>
+          <ShareButton
+            url={`${SITE}/blog/${post.slug}`}
+            title={post.titulo}
+            text={post.resumo}
+          />
         </div>
       </header>
 
