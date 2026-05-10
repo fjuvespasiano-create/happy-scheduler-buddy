@@ -147,14 +147,15 @@ function bairrosVizinhos(cidade: Cidade, bairroSlug?: string, n = 4) {
 function gerarTipoA(servico: Servico, cidade: Cidade, bairro: { slug: string; nome: string }): Post {
   const local = `${bairro.nome}, ${cidade.nome}`;
   const slug = `${servico.slug}-${bairro.slug}-${cidade.slug}`;
-  const vizinhos = bairrosVizinhos(cidade, bairro.slug, 5);
+  const vizinhos = bairrosVizinhos(cidade, bairro.slug, 6);
+  const nomeCurto = servico.nomeCurto.toLowerCase();
 
   return {
     slug,
     titulo: `${servico.nome} no ${bairro.nome} (${cidade.nome}) — orçamento na hora`,
-    resumo: `${servico.nome} profissional no ${local}. ${servico.precoBase}, agendamento rápido pelo WhatsApp.`,
+    resumo: `${servico.nome} profissional no ${local}. ${servico.precoBase}, agendamento rápido pelo WhatsApp e atendimento no mesmo dia.`,
     data: "2026-05-01",
-    leitura: "5 min",
+    leitura: "7 min",
     categoria: servico.nomeCurto,
     tipo: "A",
     servicoSlug: servico.slug,
@@ -163,27 +164,52 @@ function gerarTipoA(servico: Servico, cidade: Cidade, bairro: { slug: string; no
     keywords: [
       `${servico.nome.toLowerCase()} ${bairro.nome}`,
       `${servico.nome.toLowerCase()} ${cidade.nome}`,
-      `${servico.nomeCurto.toLowerCase()} ${bairro.nome} preço`,
-      `${servico.nomeCurto.toLowerCase()} perto de mim`,
+      `${nomeCurto} ${bairro.nome} preço`,
+      `${nomeCurto} ${bairro.nome} ${cidade.nome}`,
+      `${nomeCurto} perto de mim`,
+      `melhor ${nomeCurto} ${cidade.nome}`,
+      `${servico.nome.toLowerCase()} a domicílio ${cidade.nome}`,
     ],
     conteudo: [
-      { tipo: "humano", texto: `Se você está no ${bairro.nome}, em ${cidade.nome}, e seu ${servico.nomeCurto.toLowerCase()} está com cheiro ruim, manchas ou aspecto envelhecido, nosso atendimento chega rápido até a sua rua. Já atendemos vizinhos seus por aqui — e a maioria já marcou para o mesmo dia.` },
+      { tipo: "humano", texto: `Se você mora no ${bairro.nome}, em ${cidade.nome}, e seu ${nomeCurto} está com cheiro ruim, manchas teimosas ou aspecto envelhecido, este guia foi escrito pensando em você. Nosso atendimento de ${servico.nome.toLowerCase()} chega rápido até a sua rua, com equipamento profissional, produtos antialérgicos e equipe treinada. Já atendemos vizinhos seus por aqui — e a maioria conseguiu marcar para o mesmo dia. A vantagem de morar no ${bairro.nome} é que estamos a poucos minutos de você: significa atendimento ágil, deslocamento curto e custo final mais justo.` },
       { tipo: "prova" },
       { tipo: "cta" },
-      { tipo: "antesdepois", legenda: `${servico.nome} no ${bairro.nome} — antes e depois` },
-      { tipo: "h2", texto: `Por que contratar ${servico.nomeCurto.toLowerCase()} profissional no ${bairro.nome}` },
+      { tipo: "antesdepois", legenda: `${servico.nome} no ${bairro.nome} — antes e depois real` },
+
+      { tipo: "h2", texto: `Por que contratar ${nomeCurto} profissional no ${bairro.nome}` },
+      { tipo: "p", texto: `O ${bairro.nome} fica em uma região de ${cidade.nome} com clima úmido boa parte do ano. Essa umidade é o ambiente perfeito para ácaros, fungos e bactérias se proliferarem dentro do seu ${nomeCurto}, mesmo quando ele parece limpo por fora. A higienização caseira (pano úmido, vinagre, perfume) só remove a sujeira superficial — o que está fundo no tecido e na espuma continua lá e volta a aparecer em poucos dias. A limpeza profissional usa extratora industrial, produtos enzimáticos e técnica certa para o tipo de tecido. O resultado é diferente: cheiro neutro de verdade, cores recuperadas e ambiente mais saudável para a sua família.` },
       { tipo: "ul", itens: servico.beneficios },
-      { tipo: "h2", texto: `Problemas que resolvemos no ${bairro.nome}` },
+
+      { tipo: "h2", texto: `Problemas que resolvemos no ${bairro.nome} e em ${cidade.nome}` },
+      { tipo: "p", texto: `Cada bairro tem um perfil de problema. No ${bairro.nome} costumamos atender bastante família com criança pequena, alérgico, idoso e tutor de pet — e os pedidos mais comuns são esses:` },
       { tipo: "ul", itens: servico.problemas },
-      { tipo: "h2", texto: `Como funciona o atendimento em ${cidade.nome}` },
+      { tipo: "p", texto: `Se você se identificou com algum item da lista, isso já é um forte sinal de que o ${nomeCurto} precisa de uma higienização profissional — não de mais um perfume mascarando o cheiro.` },
+
+      { tipo: "h2", texto: `Como funciona o atendimento de ${servico.nome.toLowerCase()} no ${bairro.nome}` },
+      { tipo: "p", texto: `O processo é simples, transparente e cabe na sua rotina. Você não precisa levar o ${nomeCurto} a lugar nenhum: vamos até a sua casa no ${bairro.nome} com todo o equipamento.` },
       { tipo: "ul", itens: servico.processo.map((p) => `${p.titulo} — ${p.desc}`) },
-      { tipo: "h2", texto: `Quanto custa ${servico.nomeCurto.toLowerCase()} no ${bairro.nome}` },
-      { tipo: "p", texto: `${servico.precoBase}. O valor final depende do tamanho, tecido e nível de sujeira. Mande uma foto pelo WhatsApp e enviamos o preço exato em minutos — sem compromisso.` },
+      { tipo: "p", texto: `Em média, o atendimento dura ${servico.duracao}. A secagem acontece em poucas horas e você já volta a usar o ${nomeCurto} no mesmo dia, com cheiro neutro e textura recuperada. Tudo é feito com produtos seguros para crianças, idosos, alérgicos e animais.` },
+
+      { tipo: "h2", texto: `Quanto custa ${nomeCurto} no ${bairro.nome}` },
+      { tipo: "p", texto: `${servico.precoBase}. O valor final em ${cidade.nome} depende de três variáveis: tamanho/quantidade de peças, tipo de tecido (suede, veludo, linho, couro ecológico) e nível de sujeira (manchas, odor de pet, mofo). Por isso, em vez de tabela fixa, a gente prefere ser justo: você manda uma foto pelo WhatsApp e recebe o preço exato em minutos, sem compromisso. Nada de letra miúda, taxa surpresa ou “orçamento só na hora”. No ${bairro.nome}, por estarmos próximos, normalmente não há cobrança extra de deslocamento.` },
       { tipo: "urgencia" },
+
+      { tipo: "h2", texto: `Cuidados que você pode ter entre uma higienização e outra` },
+      { tipo: "ul", itens: [
+        "Aspirar o estofado a cada 7 a 15 dias, inclusive nas frestas",
+        "Limpar manchas novas em até 24h, sempre dando leves toques (não esfregar)",
+        "Manter o ambiente arejado para reduzir umidade — principal aliada de ácaros e mofo",
+        "Evitar produtos de cozinha (detergente, água sanitária, álcool puro) sobre o tecido",
+        "Combinar com impermeabilização para ganhar tempo entre limpezas",
+      ]},
+      { tipo: "p", texto: `Essas práticas simples não substituem a higienização profissional, mas ajudam o seu ${nomeCurto} a chegar mais limpo até o próximo atendimento — e prolongam a vida útil do estofado.` },
+
       { tipo: "h2", texto: `Bairros próximos que também atendemos em ${cidade.nome}` },
+      { tipo: "p", texto: `Mesmo que você não esteja exatamente no ${bairro.nome}, atendemos toda a região com o mesmo padrão e a mesma agilidade. Alguns bairros vizinhos onde estamos com frequência:` },
       { tipo: "ul", itens: vizinhos.map((b) => b.nome) },
+
       { tipo: "h2", texto: "Use o cupom LIMPA15" },
-      { tipo: "p", texto: `Primeiro atendimento no ${bairro.nome}? Use o cupom LIMPA15 no WhatsApp e ganhe 15% de desconto.` },
+      { tipo: "p", texto: `Primeiro atendimento no ${bairro.nome}? Use o cupom LIMPA15 ao mandar a foto do seu ${nomeCurto} no WhatsApp e ganhe 15% de desconto na higienização. Cupom válido para a primeira ordem de serviço por endereço.` },
       { tipo: "cta" },
     ],
   };
@@ -192,12 +218,13 @@ function gerarTipoA(servico: Servico, cidade: Cidade, bairro: { slug: string; no
 // Tipo B — Problema + Cidade
 function gerarTipoB(problema: typeof PROBLEMAS[number], cidade: Cidade): Post {
   const servico = SERVICOS.find((s) => s.slug === problema.servicoSlug)!;
+  const nomeCurto = servico.nomeCurto.toLowerCase();
   return {
     slug: `${problema.slug}-${cidade.slug}`,
-    titulo: `${problema.h1} em ${cidade.nome}? Veja como resolver`,
-    resumo: `Como resolver ${problema.titulo} em ${cidade.nome} com método profissional. Sem mascarar, sem promessa vazia.`,
+    titulo: `${problema.h1} em ${cidade.nome}? Veja como resolver de verdade`,
+    resumo: `Como resolver ${problema.titulo} em ${cidade.nome} com método profissional. Sem mascarar com perfume, sem promessa vazia.`,
     data: "2026-04-20",
-    leitura: "4 min",
+    leitura: "6 min",
     categoria: servico.nomeCurto,
     tipo: "B",
     servicoSlug: servico.slug,
@@ -207,19 +234,41 @@ function gerarTipoB(problema: typeof PROBLEMAS[number], cidade: Cidade): Post {
       `${problema.titulo} ${cidade.nome}`,
       `${problema.h1.toLowerCase()} ${cidade.nome}`,
       `como resolver ${problema.titulo}`,
+      `${problema.titulo} solução definitiva`,
+      `${nomeCurto} ${cidade.nome}`,
     ],
     conteudo: [
-      { tipo: "humano", texto: `${problema.h1} é mais comum do que parece em ${cidade.nome} — quem mora aqui sabe que o clima úmido piora tudo. A boa notícia: tem solução real, e ela não envolve receita caseira nem perfume.` },
+      { tipo: "humano", texto: `${problema.h1} é mais comum do que parece em ${cidade.nome} — quem mora aqui sabe que o clima úmido da Região Metropolitana de Belo Horizonte piora tudo. A boa notícia é que existe solução real: ela não envolve receita caseira, perfume reforçado nem aquela promessa de “limpeza milagrosa” da internet. Neste guia você vai entender por que o problema acontece, por que ele volta sempre quando você só tenta disfarçar e o que realmente faz diferença para resolver de uma vez por todas, com método profissional.` },
       { tipo: "prova" },
       { tipo: "cta" },
       { tipo: "antesdepois", legenda: `${problema.h1} em ${cidade.nome} — resultado real` },
-      { tipo: "h2", texto: "Por que o problema volta sempre" },
-      { tipo: "p", texto: "A maioria das soluções caseiras só mascara: perfume, pano úmido, álcool. O que está fundo no tecido continua lá e reativa com o calor e a umidade." },
+
+      { tipo: "h2", texto: "Por que esse problema volta sempre" },
+      { tipo: "p", texto: `A maioria das soluções caseiras só mascara o problema: perfume disfarça por algumas horas, pano úmido empurra a sujeira para o fundo do tecido, álcool resseca a fibra e ainda pode manchar. Em poucos dias, com o calor do corpo, a umidade do ar e o uso normal, tudo volta — muitas vezes pior do que estava antes. Especificamente em ${cidade.nome}, a umidade alta entre outubro e março acelera ainda mais o reaparecimento de odor, mancha e ácaro.` },
+
       { tipo: "h2", texto: "O que realmente resolve" },
+      { tipo: "p", texto: `O método profissional ataca o problema na raiz — não a aparência. É um processo com etapas e equipamento próprio:` },
       { tipo: "ul", itens: servico.processo.map((p) => `${p.titulo} — ${p.desc}`) },
+      { tipo: "p", texto: `Cada etapa existe por um motivo. A aspiração profunda tira o que o aspirador comum não alcança. O pré-tratamento age diretamente sobre a mancha, sem agredir o tecido. A extração úmida injeta solução higienizadora e suga junto com a sujeira dissolvida — é isso que diferencia uma limpeza “de fachada” de uma higienização de verdade.` },
+
+      { tipo: "h2", texto: "Quanto tempo dura o resultado" },
+      { tipo: "p", texto: `Quando bem feita, a higienização profissional dura entre 4 e 6 meses em uso normal. Em casa com pet, criança pequena ou alérgico, a recomendação é repetir a cada 3 meses. O importante é não esperar o problema voltar para agir — quanto antes, melhor o resultado e menor o custo.` },
+
+      { tipo: "h2", texto: `Quando é hora de chamar um profissional em ${cidade.nome}` },
+      { tipo: "ul", itens: [
+        "Você sente cheiro ruim mesmo após limpar com perfume",
+        "Mancha antiga reaparece quando o tempo esquenta",
+        "Alguém da casa tem rinite, asma ou alergia frequente",
+        "Tem pet que dorme ou faz xixi no estofado",
+        "Faz mais de 6 meses desde a última limpeza profunda",
+      ]},
+
       { tipo: "urgencia" },
+
       { tipo: "h2", texto: `Atendemos ${cidade.nome} no mesmo dia` },
-      { tipo: "ul", itens: cidade.bairros.slice(0, 8).map((b) => b.nome) },
+      { tipo: "p", texto: `Cobrimos toda ${cidade.nome} com agenda flexível e sem custo de visita. Alguns dos bairros onde mais atuamos:` },
+      { tipo: "ul", itens: cidade.bairros.slice(0, 10).map((b) => b.nome) },
+      { tipo: "p", texto: `Manda uma foto no WhatsApp contando o que está acontecendo. Em minutos você recebe um diagnóstico honesto, faixa de preço e a primeira data disponível para atendimento na sua casa em ${cidade.nome}.` },
       { tipo: "cta" },
     ],
   };
@@ -227,34 +276,48 @@ function gerarTipoB(problema: typeof PROBLEMAS[number], cidade: Cidade): Post {
 
 // Tipo C — Preço/Decisão por cidade
 function gerarTipoC(servico: Servico, cidade: Cidade): Post {
+  const nomeCurto = servico.nomeCurto.toLowerCase();
   return {
     slug: `quanto-custa-${servico.slug}-${cidade.slug}`,
-    titulo: `Quanto custa ${servico.nomeCurto.toLowerCase()} em ${cidade.nome}? Tabela 2026`,
-    resumo: `Faixas de preço reais de ${servico.nome.toLowerCase()} em ${cidade.nome} — sem letras miúdas.`,
+    titulo: `Quanto custa ${nomeCurto} em ${cidade.nome}? Tabela 2026 e o que afeta o preço`,
+    resumo: `Faixas de preço reais de ${servico.nome.toLowerCase()} em ${cidade.nome} — sem letras miúdas, sem surpresa no fim.`,
     data: "2026-03-15",
-    leitura: "3 min",
+    leitura: "5 min",
     categoria: "Preços",
     tipo: "C",
     servicoSlug: servico.slug,
     cidadeSlug: cidade.slug,
     keywords: [
-      `quanto custa ${servico.nomeCurto.toLowerCase()} ${cidade.nome}`,
+      `quanto custa ${nomeCurto} ${cidade.nome}`,
       `preço ${servico.nome.toLowerCase()} ${cidade.nome}`,
-      `valor ${servico.nomeCurto.toLowerCase()} ${cidade.nome}`,
+      `valor ${nomeCurto} ${cidade.nome}`,
+      `${nomeCurto} barato ${cidade.nome}`,
+      `${nomeCurto} ${cidade.nome} 2026`,
     ],
     conteudo: [
-      { tipo: "humano", texto: `Quem busca ${servico.nome.toLowerCase()} em ${cidade.nome} quer transparência: quanto vai custar e o que está incluso. Aqui vai sem enrolação.` },
+      { tipo: "humano", texto: `Quem busca ${servico.nome.toLowerCase()} em ${cidade.nome} quer duas coisas: transparência sobre o preço e segurança de que o serviço entregue resultado de verdade. Este guia mostra a faixa real cobrada na cidade em 2026, o que altera o valor para mais ou para menos e como evitar os “orçamentos baratos” que acabam custando o dobro depois.` },
       { tipo: "prova" },
+
       { tipo: "h2", texto: "O que muda no valor" },
       { tipo: "ul", itens: [
-        "Tamanho/quantidade de peças",
-        "Tipo de tecido ou material",
-        "Nível de sujeira e manchas",
-        "Necessidade de tratar odor (pet, mofo)",
-        `Distância dentro de ${cidade.nome}`,
+        "Tamanho e quantidade de peças (sofá 2, 3, 4 lugares, retrátil, de canto)",
+        "Tipo de tecido ou material (suede, veludo, linho, couro, courino)",
+        "Nível de sujeira, idade das manchas e exposição a pets",
+        "Necessidade de tratamento de odor (xixi, mofo, fumo, suor)",
+        "Adicional de impermeabilização (opcional, recomendado)",
+        `Distância e acesso dentro de ${cidade.nome}`,
       ]},
-      { tipo: "h2", texto: "Faixa média" },
-      { tipo: "p", texto: `${servico.precoBase}. Para um orçamento exato em ${cidade.nome}, mande uma foto no WhatsApp.` },
+      { tipo: "p", texto: `Esses fatores explicam por que duas higienizações “iguais no nome” podem ter preços bem diferentes. Um sofá de canto em suede com xixi de pet exige mais produto, mais tempo e técnica específica em comparação a um sofá comum só com poeira acumulada.` },
+
+      { tipo: "h2", texto: `Faixa média em ${cidade.nome}` },
+      { tipo: "p", texto: `${servico.precoBase}. Em média, atendimentos em ${cidade.nome} ficam dentro dessa faixa porque trabalhamos próximo, sem repassar custo alto de deslocamento. Para um orçamento exato, basta mandar uma foto no WhatsApp — em minutos você recebe o valor final, sem compromisso.` },
+
+      { tipo: "h2", texto: "Cuidado com o orçamento muito barato" },
+      { tipo: "p", texto: `Preço muito abaixo da média geralmente significa serviço “de fachada”: equipamento doméstico, produto inadequado ao tecido ou ausência de extração — o que deixa a peça úmida por dias, propensa a mofo e cheiro azedo. O barato sai caro, principalmente em estofado caro como suede e veludo.` },
+
+      { tipo: "h2", texto: "Quando vale a pena combinar com impermeabilização" },
+      { tipo: "p", texto: `Se sua casa tem criança pequena, pet ou se o sofá fica em área de convivência (sala de TV, cozinha americana), vale somar a impermeabilização logo após a higienização. O custo adicional é pequeno comparado a uma nova higienização precoce — e protege contra líquidos derramados por meses.` },
+
       { tipo: "urgencia" },
       { tipo: "cta" },
     ],
