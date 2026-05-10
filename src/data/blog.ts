@@ -104,10 +104,26 @@ const MANUAIS: Post[] = [
  * Fórmula: [Serviço] + [Bairro/Cidade]  e  [Problema] + [Cidade]
  * ======================================================================= */
 
-// Bairros prioritários por cidade (foco em conversão, não exaustivo)
+// Bairros prioritários por cidade — slugs REAIS validados em locations.ts
 const BAIRROS_PRIORITARIOS: Record<string, string[]> = {
-  "vespasiano": ["centro", "nova-pampulha", "morro-alto", "caieiras", "cristina", "solar-do-barreiro"],
-  "sao-jose-da-lapa": ["centro", "bom-pastor", "varzea", "camargos", "bandeirantes"],
+  "vespasiano": [
+    "centro",
+    "nova-pampulha",
+    "morro-alto",
+    "caieiras",
+    "gavea",
+    "jardim-imperial",
+    "distrito-industrial",
+    "jardim-alterosa",
+  ],
+  "sao-jose-da-lapa": [
+    "centro",
+    "cachoeira",
+    "vila-bandeirantes",
+    "jardim-atlantico",
+    "bom-pastor",
+    "recanto-verde",
+  ],
 };
 
 const PROBLEMAS = [
