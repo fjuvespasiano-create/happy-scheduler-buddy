@@ -1,5 +1,6 @@
 import { CIDADES, type Cidade } from "./locations";
 import { SERVICOS, type Servico } from "./servicos";
+import { MANUAIS_EXTRAS } from "./blogExtras";
 
 export type PostTipo = "A" | "B" | "C" | "manual";
 
@@ -176,18 +177,21 @@ const BAIRROS_PRIORITARIOS: Record<string, string[]> = {
     "nova-pampulha",
     "morro-alto",
     "caieiras",
-    "gavea",
-    "jardim-imperial",
+    "celvia",
+    "santa-clara",
+    "jardim-da-gloria",
+    "parque-jardim-itau",
     "distrito-industrial",
     "jardim-alterosa",
   ],
   "sao-jose-da-lapa": [
     "centro",
+    "dom-pedro-i",
+    "inacia-de-carvalho",
     "cachoeira",
-    "vila-bandeirantes",
-    "jardim-atlantico",
-    "bom-pastor",
-    "recanto-verde",
+    "vila-ical",
+    "parque-real",
+    "nova-granja",
   ],
 };
 
