@@ -325,25 +325,32 @@ export function SiteMapPage({ onBack, onStartBooking }: SiteMapPageProps) {
           <div className="space-y-3">
             {CIDADES.map((c) => (
               <article
-                key={c.nome}
+                key={c.slug}
                 className="rounded-2xl bg-card border border-border p-4"
               >
                 <div className="flex items-center gap-2 mb-3">
                   <MapPin className="h-4 w-4 text-primary" />
-                  <h4 className="font-bold text-foreground">{c.nome}</h4>
+                  <Link
+                    to="/atendimento/$cidade"
+                    params={{ cidade: c.slug }}
+                    className="font-bold text-foreground hover:text-primary"
+                  >
+                    {c.nome}
+                  </Link>
                   <span className="text-[10px] text-muted-foreground ml-auto">
                     {c.bairros.length} bairros
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {c.bairros.map((b) => (
-                    <button
-                      key={b}
-                      onClick={() => onStartBooking()}
+                    <Link
+                      key={b.slug}
+                      to="/atendimento/$cidade/$bairro"
+                      params={{ cidade: c.slug, bairro: b.slug }}
                       className="px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-[11px] text-foreground hover:bg-primary/20 transition"
                     >
-                      {b}
-                    </button>
+                      {b.nome}
+                    </Link>
                   ))}
                 </div>
               </article>
