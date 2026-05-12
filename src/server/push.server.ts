@@ -55,6 +55,7 @@ export async function deleteSubscriptionByEndpoint(endpoint: string) {
 }
 
 export async function sendPushToAll(payload: PushPayload) {
+  ensureVapid();
   const { data, error } = await supabaseAdmin
     .from("push_subscriptions")
     .select("endpoint,p256dh,auth");
