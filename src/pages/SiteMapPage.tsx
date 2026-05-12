@@ -2,6 +2,7 @@ import { ArrowLeft, MapPin, Phone, Sofa, Bed, Car, HardHat, Sparkles, Bell, Cale
 import { Link } from "@tanstack/react-router";
 import { SERVICOS } from "@/data/servicos";
 import { POSTS } from "@/data/blog";
+import { CIDADES } from "@/data/locations";
 import { useEffect } from "react";
 import { COMPANY_INFO } from "@/config/whatsappTemplate";
 import { requestNotificationPermission, getNotificationPermission } from "@/lib/pwa";
@@ -11,46 +12,6 @@ interface SiteMapPageProps {
   onBack: () => void;
   onStartBooking: (serviceId?: string) => void;
 }
-
-const CIDADES = [
-  {
-    nome: "São José da Lapa",
-    bairros: [
-      "Centro",
-      "Bom Pastor",
-      "Várzea",
-      "Camargos",
-      "Bandeirantes",
-      "Cachoeirinha",
-      "Industrial",
-      "Vargem das Flores",
-      "Santa Cruz",
-      "Bela Vista",
-      "Jardim Atlântico",
-      "Recanto Verde",
-    ],
-  },
-  {
-    nome: "Vespasiano",
-    bairros: [
-      "Centro",
-      "Nova Pampulha",
-      "Caieiras",
-      "Morro Alto",
-      "Vespasiano Industrial",
-      "Solar do Barreiro",
-      "Marimbá",
-      "Santa Clara",
-      "Jardim das Alterosas",
-      "Vila Esportiva",
-      "Cristina",
-      "Sevilha",
-      "Vila Esperança",
-      "Gávea",
-      "Vila Aeroporto",
-    ],
-  },
-];
 
 const SERVICOS_SEO = [
   {
