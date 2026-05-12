@@ -1,20 +1,18 @@
 import webpush from "web-push";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
+// VAPID keypair gerado especificamente para este projeto.
+// Pode ser sobrescrito via env (VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY) sem precisar redeploy.
 const VAPID_PUBLIC =
   process.env.VAPID_PUBLIC_KEY ||
   "BMlhYWKmxGL3CAJXDMOR2tJ7qZjDe8zfmN0bYpw0GO-SpKjOCrLb3b0zXViUi7USvaj8Vt0ZttY7dUkXeWwr55c";
-const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY;
+const VAPID_PRIVATE =
+  process.env.VAPID_PRIVATE_KEY || "Zda8fv5wejyf3X6CRUIQZ8hDCVjQxX1QDGptC9aPPJQ";
 const VAPID_SUBJECT = process.env.VAPID_SUBJECT || "mailto:contato@cleanpro.app";
 
 let vapidConfigured = false;
 function ensureVapid() {
   if (vapidConfigured) return;
-  if (!VAPID_PRIVATE) {
-    throw new Error(
-      "VAPID_PRIVATE_KEY env var is missing. Configure it in Lovable Cloud → Secrets.",
-    );
-  }
   webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC, VAPID_PRIVATE);
   vapidConfigured = true;
 }
