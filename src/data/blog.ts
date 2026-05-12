@@ -1,5 +1,6 @@
 import { CIDADES, type Cidade } from "./locations";
 import { SERVICOS, type Servico } from "./servicos";
+import { MANUAIS_EXTRAS } from "./blogExtras";
 
 export type PostTipo = "A" | "B" | "C" | "manual";
 
