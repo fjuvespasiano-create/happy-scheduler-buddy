@@ -245,7 +245,7 @@ function gerarTipoA(servico: Servico, cidade: Cidade, bairro: { slug: string; no
       { tipo: "cta" },
       { tipo: "antesdepois", legenda: `${servico.nome} no ${bairro.nome} — antes e depois real` },
 
-      { tipo: "h2", texto: `Por que contratar ${nomeCurto} profissional no ${bairro.nome}` },
+      { tipo: "h2", texto: `Por que contratar a Auto Limpeza Pro em ${bairro.nome}` },
       { tipo: "p", texto: `O ${bairro.nome} fica em uma região de ${cidade.nome} com clima úmido boa parte do ano. Essa umidade é o ambiente perfeito para ácaros, fungos e bactérias se proliferarem dentro do seu ${nomeCurto}, mesmo quando ele parece limpo por fora. A higienização caseira (pano úmido, vinagre, perfume) só remove a sujeira superficial — o que está fundo no tecido e na espuma continua lá e volta a aparecer em poucos dias. A limpeza profissional usa extratora industrial, produtos enzimáticos e técnica certa para o tipo de tecido. O resultado é diferente: cheiro neutro de verdade, cores recuperadas e ambiente mais saudável para a sua família.` },
       { tipo: "ul", itens: servico.beneficios },
 
