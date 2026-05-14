@@ -14,13 +14,25 @@ const SubscriptionSchema = z.object({
   p256dh: z.string().min(1).max(512),
   auth: z.string().min(1).max(256),
   user_agent: z.string().max(512).optional().nullable(),
-  user_id: z.string().uuid().optional().nullable(),
 });
 
 export const saveSubscription = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => SubscriptionSchema.parse(input))
   .handler(async ({ data }) => {
-    await saveSubscriptionRow(data);
+    // Anonymous save path — never trust client-supplied user_id.
+    // Authenticated users should call saveMySubscription instead.
+    await saveSubscriptionRow({ ...data, user_id: null });
+    return { ok: true };
+  });
+
+/**
+ * Authenticated save — derives user_id server-side from the verified session.
+ */
+export const saveMySubscription = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => SubscriptionSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await saveSubscriptionRow({ ...data, user_id: context.userId });
     return { ok: true };
   });
 
