@@ -127,15 +127,27 @@ export async function ensurePushSubscription(): Promise<PushSubscription | null>
   if (!reg) return null;
 
   const existing = await reg.pushManager.getSubscription();
-  const { VAPID_PUBLIC_KEY } = await import("./vapid");
-  const { saveSubscription } = await import("@/server/push.functions");
+  const { saveSubscription, getVapidPublicKey } = await import("@/server/push.functions");
+
+  // Cache the key for the session — server auto-generates it on first call.
+  let vapidKey = sessionStorage.getItem("vapid_pub");
+  if (!vapidKey) {
+    try {
+      const res = await getVapidPublicKey();
+      vapidKey = res.publicKey;
+      sessionStorage.setItem("vapid_pub", vapidKey);
+    } catch (err) {
+      console.warn("[PWA] failed to fetch VAPID key", err);
+      return null;
+    }
+  }
 
   const sub =
     existing ??
     (await reg.pushManager
       .subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY).buffer as ArrayBuffer,
+        applicationServerKey: urlBase64ToUint8Array(vapidKey).buffer as ArrayBuffer,
       })
       .catch((err) => {
         console.warn("[PWA] push subscribe failed", err);

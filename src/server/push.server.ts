@@ -1,20 +1,82 @@
 import webpush from "web-push";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-// VAPID keys MUST come from env. No hardcoded fallback for the private key.
-let vapidConfigured = false;
-function ensureVapid() {
-  if (vapidConfigured) return;
-  const VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY;
-  const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY;
-  const VAPID_SUBJECT = process.env.VAPID_SUBJECT || "mailto:contato@cleanpro.app";
-  if (!VAPID_PUBLIC || !VAPID_PRIVATE) {
-    throw new Error(
-      "VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY must be configured as server secrets.",
-    );
+// VAPID keys are auto-generated on first use and stored in `app_secrets`.
+// No env vars, no hardcoded secrets, no manual setup needed.
+type VapidPair = { publicKey: string; privateKey: string; subject: string };
+let vapidCache: VapidPair | null = null;
+
+async function loadVapidFromDb(): Promise<Partial<VapidPair>> {
+  const { data, error } = await supabaseAdmin
+    .from("app_secrets")
+    .select("key,value")
+    .in("key", ["vapid_public", "vapid_private", "vapid_subject"]);
+  if (error) throw new Error(error.message);
+  const map = Object.fromEntries((data ?? []).map((r) => [r.key, r.value]));
+  return {
+    publicKey: map.vapid_public,
+    privateKey: map.vapid_private,
+    subject: map.vapid_subject,
+  };
+}
+
+async function persistVapid(pair: VapidPair): Promise<void> {
+  const rows = [
+    { key: "vapid_public", value: pair.publicKey },
+    { key: "vapid_private", value: pair.privateKey },
+    { key: "vapid_subject", value: pair.subject },
+  ];
+  const { error } = await supabaseAdmin
+    .from("app_secrets")
+    .upsert(rows, { onConflict: "key" });
+  if (error) throw new Error(error.message);
+}
+
+async function ensureVapid(): Promise<VapidPair> {
+  if (vapidCache) {
+    webpush.setVapidDetails(vapidCache.subject, vapidCache.publicKey, vapidCache.privateKey);
+    return vapidCache;
   }
-  webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC, VAPID_PRIVATE);
-  vapidConfigured = true;
+  const existing = await loadVapidFromDb();
+  let pair: VapidPair;
+  if (existing.publicKey && existing.privateKey) {
+    pair = {
+      publicKey: existing.publicKey,
+      privateKey: existing.privateKey,
+      subject: existing.subject || "mailto:contato@autolimpezapro.app",
+    };
+  } else {
+    const generated = webpush.generateVAPIDKeys();
+    pair = {
+      publicKey: generated.publicKey,
+      privateKey: generated.privateKey,
+      subject: existing.subject || "mailto:contato@autolimpezapro.app",
+    };
+    await persistVapid(pair);
+  }
+  webpush.setVapidDetails(pair.subject, pair.publicKey, pair.privateKey);
+  vapidCache = pair;
+  return pair;
+}
+
+export async function getVapidPublic(): Promise<string> {
+  const pair = await ensureVapid();
+  return pair.publicKey;
+}
+
+export async function rotateVapidKeys(): Promise<string> {
+  const generated = webpush.generateVAPIDKeys();
+  const pair: VapidPair = {
+    publicKey: generated.publicKey,
+    privateKey: generated.privateKey,
+    subject: vapidCache?.subject || "mailto:contato@autolimpezapro.app",
+  };
+  await persistVapid(pair);
+  // Old subscriptions are now invalid; wipe so we don't try to send with mismatched keys.
+  await supabaseAdmin.from("push_subscriptions").delete().neq("endpoint", "");
+  webpush.setVapidDetails(pair.subject, pair.publicKey, pair.privateKey);
+  vapidCache = pair;
+  return pair.publicKey;
 }
 
 export type PushPayload = {
@@ -53,7 +115,7 @@ export async function deleteSubscriptionByEndpoint(endpoint: string) {
 }
 
 export async function sendPushToAll(payload: PushPayload) {
-  ensureVapid();
+  await ensureVapid();
   const { data, error } = await supabaseAdmin
     .from("push_subscriptions")
     .select("endpoint,p256dh,auth");
@@ -68,10 +130,7 @@ export async function sendPushToAll(payload: PushPayload) {
     subs.map(async (s) => {
       try {
         await webpush.sendNotification(
-          {
-            endpoint: s.endpoint,
-            keys: { p256dh: s.p256dh, auth: s.auth },
-          },
+          { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
           body,
         );
         sent++;
