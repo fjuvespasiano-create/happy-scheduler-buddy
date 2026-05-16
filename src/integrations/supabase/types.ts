@@ -206,6 +206,42 @@ export type Database = {
         }
         Relationships: []
       }
+      leads: {
+        Row: {
+          cidade: string | null
+          created_at: string
+          id: string
+          mensagem: string | null
+          nome: string
+          origem: string | null
+          servico: string
+          status: string
+          telefone: string
+        }
+        Insert: {
+          cidade?: string | null
+          created_at?: string
+          id?: string
+          mensagem?: string | null
+          nome: string
+          origem?: string | null
+          servico: string
+          status?: string
+          telefone: string
+        }
+        Update: {
+          cidade?: string | null
+          created_at?: string
+          id?: string
+          mensagem?: string | null
+          nome?: string
+          origem?: string | null
+          servico?: string
+          status?: string
+          telefone?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
