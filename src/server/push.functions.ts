@@ -6,8 +6,40 @@ import {
   saveSubscriptionRow,
   deleteSubscriptionByEndpoint,
   sendPushToAll,
+  getVapidPublic,
+  rotateVapidKeys,
   type PushPayload,
 } from "./push.server";
+
+/**
+ * Public — returns the VAPID public key (auto-generated on first call).
+ * Safe to expose; private key never leaves the server.
+ */
+export const getVapidPublicKey = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const publicKey = await getVapidPublic();
+    return { publicKey };
+  },
+);
+
+/**
+ * Admin only — generates a new VAPID pair and invalidates every existing
+ * subscription. Users will need to re-enable notifications afterwards.
+ */
+export const rotateVapid = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: roleRow, error: roleError } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    if (roleError) throw new Error(roleError.message);
+    if (!roleRow) throw new Response("Forbidden", { status: 403 });
+    const publicKey = await rotateVapidKeys();
+    return { publicKey };
+  });
 
 const SubscriptionSchema = z.object({
   endpoint: z.string().url().max(2048),
