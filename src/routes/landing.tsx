@@ -1,21 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ShieldCheck,
   Star,
-  Clock,
   Phone,
   CheckCircle2,
-  Sparkles,
-  Sofa,
-  Bed,
-  Car,
-  HardHat,
   ArrowRight,
-  MapPin,
   MessageCircle,
   Loader2,
+  Play,
+  ChevronLeft,
+  ChevronRight,
+  Youtube,
+  X,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,159 +27,446 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
-import { BeforeAfterGallery } from "@/components/BeforeAfterGallery";
 import { submitLead } from "@/lib/leads.functions";
+import { getChannelVideos, type YTVideo } from "@/lib/youtube.functions";
 import logoAutoLimpeza from "@/assets/auto-limpeza-pro-logo.jpg";
-import mascote from "@/assets/mascote-auto-limpeza-pro.png";
 
 const SERVICOS = [
-  { id: "sofa", nome: "Sofá", icon: Sofa, from: 180 },
-  { id: "colchao", nome: "Colchão", icon: Bed, from: 130 },
-  { id: "automotiva", nome: "Estética automotiva", icon: Car, from: 200 },
-  { id: "impermeabilizacao", nome: "Impermeabilização", icon: Sparkles, from: 160 },
-  { id: "pos-obra", nome: "Pós-obra", icon: HardHat, from: 18 },
+  "Higienização de sofá",
+  "Higienização de colchão",
+  "Estética automotiva",
+  "Impermeabilização",
+  "Pós-obra",
+  "Outro",
 ];
 
-const FAQ = [
-  {
-    q: "Quanto tempo leva a higienização?",
-    a: "Sofá de 2 a 3 lugares leva em média 1h30. Colchão king cerca de 1h. Automóvel completo de 3 a 5 horas.",
-  },
-  {
-    q: "Os produtos são seguros para crianças e pets?",
-    a: "Sim. Utilizamos produtos biodegradáveis, hipoalergênicos e atóxicos. Após a secagem o ambiente está liberado.",
-  },
-  {
-    q: "Quais bairros vocês atendem?",
-    a: "São José da Lapa, Vespasiano, Nova Granja, Morro Alto, Célvia, Santa Clara, Caieiras e região metropolitana de BH.",
-  },
-  {
-    q: "Posso parcelar?",
-    a: "Sim. Aceitamos PIX, dinheiro e cartão em até 3x sem juros.",
-  },
-];
+const SITE_URL = "https://http-autolimpezapro-agendaaqui-online.lovable.app/landing";
 
 export const Route = createFileRoute("/landing")({
-  head: () => ({
-    meta: [
-      { title: "Higienização de Sofá, Colchão e Automotiva | Auto Limpeza Pro" },
-      {
-        name: "description",
-        content:
-          "Solicite seu orçamento gratuito. Higienização profissional de estofados, automotiva e pós-obra em São José da Lapa, Vespasiano e região. Atendimento no mesmo dia.",
+  loader: () => getChannelVideos(),
+  head: ({ loaderData }) => {
+    const videos = loaderData?.videos ?? [];
+    const itemListLd = {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: videos.slice(0, 10).map((v, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: v.url,
+        name: v.title,
+      })),
+    };
+    const orgLd = {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      name: "Auto Limpeza Pro",
+      image: "https://http-autolimpezapro-agendaaqui-online.lovable.app/icon-512.png",
+      url: SITE_URL,
+      telephone: "+5531980252882",
+      areaServed: ["São José da Lapa", "Vespasiano", "Belo Horizonte"],
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "São José da Lapa",
+        addressRegion: "MG",
+        addressCountry: "BR",
       },
-      { property: "og:title", content: "Auto Limpeza Pro — Orçamento gratuito" },
-      {
-        property: "og:description",
-        content:
-          "Estofados, automotiva e pós-obra com 8+ anos de experiência. Peça seu orçamento em 1 minuto.",
+      sameAs: [`https://www.youtube.com/@${loaderData?.handle ?? ""}`],
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "4.9",
+        reviewCount: "53",
       },
-      { property: "og:url", content: "https://http-autolimpezapro-agendaaqui-online.lovable.app/landing" },
-    ],
-    links: [
-      { rel: "canonical", href: "https://http-autolimpezapro-agendaaqui-online.lovable.app/landing" },
-    ],
-  }),
+    };
+    return {
+      meta: [
+        {
+          title:
+            "Auto Limpeza Pro — Higienização de Sofá, Colchão e Automotiva | Vídeos reais",
+        },
+        {
+          name: "description",
+          content:
+            "Veja transformações reais em vídeo e peça seu orçamento gratuito. Higienização profissional de estofados, automotiva e pós-obra em São José da Lapa, Vespasiano e região metropolitana de BH.",
+        },
+        {
+          name: "keywords",
+          content:
+            "higienização sofá vespasiano, limpeza colchão são josé da lapa, estética automotiva BH, impermeabilização sofá, antes e depois sofá",
+        },
+        { property: "og:title", content: "Auto Limpeza Pro — Resultados reais em vídeo" },
+        {
+          property: "og:description",
+          content:
+            "Transformações ao vivo no nosso canal. Orçamento gratuito em 15 minutos.",
+        },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: SITE_URL },
+        {
+          property: "og:image",
+          content: videos[0]
+            ? videos[0].thumbnailHQ
+            : "https://http-autolimpezapro-agendaaqui-online.lovable.app/icon-512.png",
+        },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+      links: [{ rel: "canonical", href: SITE_URL }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(orgLd),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(itemListLd),
+        },
+      ],
+    };
+  },
   component: LandingPage,
 });
 
 function LandingPage() {
+  const { videos, channelUrl } = Route.useLoaderData();
+  const [playing, setPlaying] = useState<YTVideo | null>(null);
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <TopBar />
-      <Hero />
+    <div className="min-h-screen bg-[#0a0a0f] text-white">
+      <TopBar channelUrl={channelUrl} />
+      <Hero featured={videos[0]} onPlay={setPlaying} />
+      <NetflixRow
+        title="Em alta no nosso canal"
+        subtitle="Últimos vídeos postados — atualizados automaticamente"
+        videos={videos}
+        onPlay={setPlaying}
+        channelUrl={channelUrl}
+      />
       <TrustStrip />
-      <Servicos />
-      <ComoFunciona />
-      <AntesDepois />
-      <Depoimentos />
-      <FaqSection />
-      <CtaFinal />
-      <Footer />
+      <LeadSection />
+      <CtaFinal channelUrl={channelUrl} />
+      <Footer channelUrl={channelUrl} />
+      {playing && <PlayerModal video={playing} onClose={() => setPlaying(null)} />}
     </div>
   );
 }
 
-function TopBar() {
+/* ---------- Top bar ---------- */
+function TopBar({ channelUrl }: { channelUrl: string }) {
   return (
-    <header className="sticky top-0 z-40 backdrop-blur bg-background/80 border-b border-border">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <header className="sticky top-0 z-40 backdrop-blur-md bg-[#0a0a0f]/80 border-b border-white/10">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-lg overflow-hidden bg-black">
+          <div className="w-9 h-9 rounded-lg overflow-hidden ring-1 ring-primary/40">
             <img src={logoAutoLimpeza} alt="Auto Limpeza Pro" className="w-full h-full object-cover" />
           </div>
-          <span className="font-bold text-sm sm:text-base">Auto Limpeza Pro</span>
+          <div className="leading-none">
+            <p className="font-extrabold text-sm sm:text-base tracking-tight">
+              Auto Limpeza <span className="text-primary">Pro</span>
+            </p>
+            <p className="text-[10px] uppercase tracking-widest text-white/50">
+              Higienização profissional
+            </p>
+          </div>
         </Link>
-        <a
-          href="https://wa.me/5531980252882?text=Ol%C3%A1,%20quero%20um%20or%C3%A7amento."
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-3 sm:px-4 h-9 rounded-lg bg-success text-success-foreground text-xs sm:text-sm font-semibold"
-        >
-          <MessageCircle className="h-4 w-4" />
-          <span className="hidden sm:inline">WhatsApp</span>
-          <span className="sm:hidden">Falar</span>
-        </a>
+        <div className="flex items-center gap-2">
+          <a
+            href={channelUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white/10 hover:bg-white/15 text-xs font-semibold"
+          >
+            <Youtube className="h-4 w-4 text-red-500" /> Canal
+          </a>
+          <a
+            href="https://wa.me/5531980252882?text=Ol%C3%A1,%20quero%20um%20or%C3%A7amento."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 sm:px-4 h-9 rounded-lg bg-success text-success-foreground text-xs sm:text-sm font-semibold"
+          >
+            <MessageCircle className="h-4 w-4" />
+            <span className="hidden sm:inline">WhatsApp</span>
+            <span className="sm:hidden">Falar</span>
+          </a>
+        </div>
       </div>
     </header>
   );
 }
 
-function Hero() {
+/* ---------- Hero (Netflix billboard) ---------- */
+function Hero({
+  featured,
+  onPlay,
+}: {
+  featured?: YTVideo;
+  onPlay: (v: YTVideo) => void;
+}) {
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-background to-accent/10" aria-hidden />
-      <div className="relative max-w-6xl mx-auto px-4 py-10 sm:py-16 grid lg:grid-cols-2 gap-8 items-center">
-        <div>
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 border border-primary/30 px-3 py-1 mb-4">
-            <ShieldCheck className="h-3 w-3 text-primary" />
-            <span className="text-[11px] font-semibold text-primary">
+      {/* backdrop */}
+      <div className="absolute inset-0">
+        {featured ? (
+          <img
+            src={featured.thumbnailHQ}
+            alt=""
+            aria-hidden
+            className="w-full h-full object-cover opacity-40 scale-110 blur-[2px]"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-primary/30 via-[#0a0a0f] to-[#0a0a0f]" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0f] via-[#0a0a0f]/60 to-transparent" />
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 pt-10 pb-14 sm:pt-16 sm:pb-24">
+        <div className="max-w-2xl">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 border border-primary/40 px-3 py-1 mb-4">
+            <Sparkles className="h-3 w-3 text-primary" />
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-primary">
               SJ Lapa • Vespasiano • Região metropolitana BH
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight">
-            Seu sofá, colchão ou carro <span className="text-gradient">como novo</span> em poucas horas
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] tracking-tight">
+            Seu sofá, colchão ou carro
+            <br />
+            <span className="text-gradient">como novo</span> — veja ao vivo.
           </h1>
-          <p className="mt-4 text-sm sm:text-base text-muted-foreground">
-            Higienização profissional com produtos seguros para crianças e pets. Receba seu orçamento
-            <strong className="text-foreground"> gratuito em até 15 minutos</strong>.
+          <p className="mt-4 text-base sm:text-lg text-white/80 max-w-xl">
+            Mais de 50 transformações reais no nosso canal. Produtos seguros para
+            crianças e pets, atendimento no mesmo dia.
           </p>
 
-          <ul className="mt-5 grid sm:grid-cols-2 gap-2">
-            {[
-              "Atendimento no mesmo dia",
-              "Produtos hipoalergênicos",
-              "Equipe uniformizada",
-              "Garantia de satisfação",
-            ].map((b) => (
-              <li key={b} className="flex items-center gap-2 text-sm">
-                <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
-                <span>{b}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-6 flex flex-wrap gap-3">
+            {featured && (
+              <button
+                onClick={() => onPlay(featured)}
+                className="inline-flex items-center gap-2 h-12 px-6 rounded-lg bg-white text-black font-bold hover:bg-white/90 transition"
+              >
+                <Play className="h-5 w-5 fill-black" /> Assistir agora
+              </button>
+            )}
+            <a
+              href="#orcamento"
+              className="inline-flex items-center gap-2 h-12 px-6 rounded-lg bg-white/15 hover:bg-white/25 backdrop-blur text-white font-bold border border-white/20"
+            >
+              Pedir orçamento <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
 
-          <div className="hidden lg:flex items-center gap-6 mt-6">
+          <div className="flex items-center gap-5 mt-6 text-sm">
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((i) => (
                 <Star key={i} className="h-4 w-4 fill-warning text-warning" />
               ))}
-              <span className="ml-1 text-sm font-semibold">4.9/5</span>
+              <span className="ml-1 font-semibold">4.9/5</span>
             </div>
-            <span className="text-xs text-muted-foreground">+50 clientes atendidos</span>
+            <span className="text-white/60">+50 clientes satisfeitos</span>
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <div className="relative">
-          <img
-            src={mascote}
-            alt="Mascote Auto Limpeza Pro"
-            className="absolute -top-10 -right-4 w-28 sm:w-36 opacity-90 hidden sm:block pointer-events-none"
-          />
-          <LeadForm />
+/* ---------- Netflix-style row ---------- */
+function NetflixRow({
+  title,
+  subtitle,
+  videos,
+  onPlay,
+  channelUrl,
+}: {
+  title: string;
+  subtitle?: string;
+  videos: YTVideo[];
+  onPlay: (v: YTVideo) => void;
+  channelUrl: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const scroll = (dir: 1 | -1) => {
+    const el = ref.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: "smooth" });
+  };
+
+  if (!videos.length) {
+    return (
+      <section className="max-w-7xl mx-auto px-4 py-10">
+        <h2 className="text-xl sm:text-2xl font-bold">{title}</h2>
+        <p className="text-sm text-white/60 mt-2">
+          Conteúdo carregando do canal —{" "}
+          <a href={channelUrl} target="_blank" rel="noopener noreferrer" className="underline">
+            ver no YouTube
+          </a>
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="max-w-7xl mx-auto px-4 py-10">
+      <div className="flex items-end justify-between mb-3">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight">{title}</h2>
+          {subtitle && <p className="text-xs sm:text-sm text-white/60 mt-1">{subtitle}</p>}
         </div>
+        <div className="hidden md:flex gap-2">
+          <button
+            onClick={() => scroll(-1)}
+            aria-label="Anterior"
+            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            onClick={() => scroll(1)}
+            aria-label="Próximo"
+            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+
+      <div
+        ref={ref}
+        className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4 scrollbar-thin"
+        style={{ scrollbarWidth: "thin" }}
+      >
+        {videos.map((v) => (
+          <VideoCard key={v.id} v={v} onPlay={onPlay} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function VideoCard({ v, onPlay }: { v: YTVideo; onPlay: (v: YTVideo) => void }) {
+  return (
+    <button
+      onClick={() => onPlay(v)}
+      className="group relative shrink-0 snap-start w-[180px] sm:w-[220px] aspect-[9/16] rounded-xl overflow-hidden bg-black/40 ring-1 ring-white/10 hover:ring-primary/60 transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/30 text-left"
+    >
+      <img
+        src={v.thumbnail}
+        alt={v.title}
+        loading="lazy"
+        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+      <div className="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-600/90 text-[10px] font-bold uppercase tracking-wider">
+        <Youtube className="h-2.5 w-2.5" /> Short
+      </div>
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+        <div className="w-14 h-14 rounded-full bg-white/95 flex items-center justify-center">
+          <Play className="h-7 w-7 fill-black text-black ml-1" />
+        </div>
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 p-3">
+        <p className="text-xs sm:text-sm font-bold leading-tight line-clamp-2 drop-shadow">
+          {v.title}
+        </p>
+      </div>
+    </button>
+  );
+}
+
+/* ---------- Player modal ---------- */
+function PlayerModal({ video, onClose }: { video: YTVideo; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6"
+      onClick={onClose}
+    >
+      <button
+        aria-label="Fechar"
+        className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center"
+        onClick={onClose}
+      >
+        <X className="h-5 w-5" />
+      </button>
+      <div
+        className="w-full max-w-[420px] aspect-[9/16] rounded-2xl overflow-hidden bg-black shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <iframe
+          src={`https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+          title={video.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="w-full h-full"
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Trust strip ---------- */
+function TrustStrip() {
+  const items = [
+    { label: "+50 clientes", sub: "atendidos" },
+    { label: "4.9 / 5", sub: "avaliação" },
+    { label: "8+ anos", sub: "experiência" },
+    { label: "Mesmo dia", sub: "atendimento" },
+  ];
+  return (
+    <section className="border-y border-white/10 bg-white/[0.02]">
+      <div className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {items.map((it) => (
+          <div key={it.label} className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="font-extrabold text-sm leading-none">{it.label}</p>
+              <p className="text-[11px] text-white/60 mt-0.5">{it.sub}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Lead form ---------- */
+function LeadSection() {
+  return (
+    <section id="orcamento" className="max-w-7xl mx-auto px-4 py-14">
+      <div className="grid lg:grid-cols-2 gap-8 items-start">
+        <div>
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+            Peça seu <span className="text-gradient">orçamento gratuito</span>
+          </h2>
+          <p className="mt-3 text-white/70">
+            Resposta em até <strong className="text-white">15 minutos</strong>. Sem
+            compromisso, sem enrolação.
+          </p>
+          <ul className="mt-5 space-y-2">
+            {[
+              "Produtos hipoalergênicos e seguros para crianças e pets",
+              "Equipe uniformizada e identificada",
+              "Garantia de satisfação ou refazemos",
+              "Aceitamos PIX, dinheiro e cartão em até 3x",
+            ].map((b) => (
+              <li key={b} className="flex items-start gap-2 text-sm text-white/85">
+                <CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" />
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <LeadForm />
       </div>
     </section>
   );
@@ -221,11 +507,11 @@ function LeadForm() {
 
   if (done) {
     return (
-      <div className="relative rounded-3xl bg-card border border-success/40 shadow-salon-lg p-6 text-center">
+      <div className="rounded-3xl bg-white/5 border border-success/40 p-8 text-center backdrop-blur">
         <CheckCircle2 className="h-12 w-12 text-success mx-auto" />
-        <h3 className="mt-3 text-xl font-bold">Pedido recebido!</h3>
-        <p className="text-sm text-muted-foreground mt-1">
-          Vamos retornar em até <strong>15 minutos</strong>. Para resposta imediata, chame no WhatsApp.
+        <h3 className="mt-3 text-2xl font-bold">Pedido recebido!</h3>
+        <p className="text-sm text-white/70 mt-1">
+          Vamos retornar em até <strong>15 minutos</strong>.
         </p>
         <a
           href={`https://wa.me/5531980252882?text=${encodeURIComponent(
@@ -244,29 +530,29 @@ function LeadForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative rounded-3xl bg-card border border-border shadow-salon-lg p-5 sm:p-6 space-y-3"
+      className="rounded-3xl bg-white/5 border border-white/10 backdrop-blur p-6 sm:p-7 space-y-3"
     >
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold">Orçamento grátis em 15 min</h2>
+        <h3 className="text-lg font-bold">Orçamento grátis em 15 min</h3>
         <span className="text-[10px] px-2 py-1 rounded-full bg-success/15 text-success font-semibold">
           Sem compromisso
         </span>
       </div>
 
       <div>
-        <Label htmlFor="nome">Nome</Label>
+        <Label htmlFor="nome" className="text-white/80">Nome</Label>
         <Input
           id="nome"
           value={form.nome}
           onChange={(e) => onChange("nome")(e.target.value)}
           placeholder="Como podemos te chamar?"
           maxLength={120}
+          className="bg-white/5 border-white/10 text-white placeholder:text-white/40"
           required
         />
       </div>
-
       <div>
-        <Label htmlFor="telefone">WhatsApp</Label>
+        <Label htmlFor="telefone" className="text-white/80">WhatsApp</Label>
         <Input
           id="telefone"
           type="tel"
@@ -274,40 +560,40 @@ function LeadForm() {
           onChange={(e) => onChange("telefone")(e.target.value)}
           placeholder="(31) 9 0000-0000"
           maxLength={30}
+          className="bg-white/5 border-white/10 text-white placeholder:text-white/40"
           required
         />
       </div>
-
       <div>
-        <Label>Serviço</Label>
+        <Label className="text-white/80">Serviço</Label>
         <Select value={form.servico} onValueChange={onChange("servico")}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white/5 border-white/10 text-white">
             <SelectValue placeholder="O que você precisa limpar?" />
           </SelectTrigger>
           <SelectContent>
             {SERVICOS.map((s) => (
-              <SelectItem key={s.id} value={s.nome}>
-                {s.nome}
+              <SelectItem key={s} value={s}>
+                {s}
               </SelectItem>
             ))}
-            <SelectItem value="Outro">Outro</SelectItem>
           </SelectContent>
         </Select>
       </div>
-
       <div>
-        <Label htmlFor="cidade">Cidade / bairro (opcional)</Label>
+        <Label htmlFor="cidade" className="text-white/80">
+          Cidade / bairro (opcional)
+        </Label>
         <Input
           id="cidade"
           value={form.cidade}
           onChange={(e) => onChange("cidade")(e.target.value)}
           placeholder="Ex: Nova Granja, São José da Lapa"
           maxLength={120}
+          className="bg-white/5 border-white/10 text-white placeholder:text-white/40"
         />
       </div>
-
       <div>
-        <Label htmlFor="mensagem">Detalhes (opcional)</Label>
+        <Label htmlFor="mensagem" className="text-white/80">Detalhes (opcional)</Label>
         <Textarea
           id="mensagem"
           value={form.mensagem}
@@ -315,9 +601,9 @@ function LeadForm() {
           placeholder="Ex: sofá de 3 lugares com manchas de café"
           maxLength={1000}
           rows={3}
+          className="bg-white/5 border-white/10 text-white placeholder:text-white/40"
         />
       </div>
-
       <Button type="submit" size="lg" className="w-full" disabled={loading}>
         {loading ? (
           <>
@@ -329,238 +615,79 @@ function LeadForm() {
           </>
         )}
       </Button>
-
-      <p className="text-[11px] text-muted-foreground text-center">
+      <p className="text-[11px] text-white/50 text-center">
         🔒 Seus dados são usados apenas para retornar seu orçamento.
       </p>
     </form>
   );
 }
 
-function TrustStrip() {
-  const items = [
-    { icon: ShieldCheck, label: "+50 clientes", sub: "atendidos" },
-    { icon: Star, label: "4.9 / 5", sub: "avaliação" },
-    { icon: Clock, label: "8+ anos", sub: "experiência" },
-    { icon: MapPin, label: "Atendimento", sub: "no mesmo dia" },
-  ];
+/* ---------- CTA final ---------- */
+function CtaFinal({ channelUrl }: { channelUrl: string }) {
   return (
-    <section className="border-y border-border bg-card/40">
-      <div className="max-w-6xl mx-auto px-4 py-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {items.map((it) => (
-          <div key={it.label} className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-              <it.icon className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="font-bold text-sm leading-none">{it.label}</p>
-              <p className="text-[11px] text-muted-foreground">{it.sub}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function Servicos() {
-  return (
-    <section className="max-w-6xl mx-auto px-4 py-12">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl sm:text-3xl font-bold">Serviços com preço a partir de</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Valores médios — receba seu orçamento exato em minutos
-        </p>
-      </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {SERVICOS.map((s) => (
-          <div
-            key={s.id}
-            className="group rounded-2xl border border-border bg-card p-5 hover:border-primary/50 transition-all"
-          >
-            <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-              <s.icon className="h-6 w-6" />
-            </div>
-            <h3 className="mt-3 font-bold">{s.nome}</h3>
-            <p className="text-xs text-muted-foreground">A partir de</p>
-            <p className="text-2xl font-extrabold text-gradient">
-              R$ {s.from}
-              <span className="text-xs text-muted-foreground font-normal">,00</span>
-            </p>
+    <section className="max-w-7xl mx-auto px-4 py-14">
+      <div className="relative overflow-hidden rounded-3xl gradient-primary p-8 sm:p-12 text-center text-primary-foreground">
+        <div className="absolute inset-0 opacity-20 mix-blend-overlay [background:radial-gradient(circle_at_30%_20%,white,transparent_40%)]" />
+        <div className="relative">
+          <h2 className="text-3xl sm:text-4xl font-extrabold">
+            Pronto para deixar tudo como novo?
+          </h2>
+          <p className="mt-2 opacity-90 text-sm sm:text-base">
+            Orçamento em 15 minutos — ou veja mais transformações no nosso canal.
+          </p>
+          <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="#orcamento"
-              onClick={(e) => {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-              className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary"
+              className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-white text-primary font-bold"
             >
-              Pedir orçamento <ArrowRight className="h-3 w-3" />
+              Pedir orçamento <ArrowRight className="h-4 w-4" />
+            </a>
+            <a
+              href="https://wa.me/5531980252882?text=Ol%C3%A1,%20quero%20um%20or%C3%A7amento."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-success text-success-foreground font-bold"
+            >
+              <MessageCircle className="h-4 w-4" /> WhatsApp
+            </a>
+            <a
+              href={channelUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-black/30 backdrop-blur border border-white/30 font-bold"
+            >
+              <Youtube className="h-4 w-4 text-red-400" /> Ver canal
+            </a>
+            <a
+              href="tel:+5531980252882"
+              className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-white/15 backdrop-blur border border-white/30 font-bold"
+            >
+              <Phone className="h-4 w-4" /> Ligar
             </a>
           </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function ComoFunciona() {
-  const steps = [
-    { n: "1", t: "Você pede o orçamento", d: "Formulário rápido ou WhatsApp" },
-    { n: "2", t: "Confirmamos o valor", d: "Resposta em até 15 minutos" },
-    { n: "3", t: "Equipe vai até você", d: "Trabalho feito no mesmo dia" },
-  ];
-  return (
-    <section className="bg-card/40 border-y border-border">
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center">Do pedido à limpeza em 3 passos</h2>
-        <div className="mt-8 grid md:grid-cols-3 gap-4">
-          {steps.map((s) => (
-            <div key={s.n} className="rounded-2xl bg-background border border-border p-6">
-              <div className="w-12 h-12 rounded-full gradient-primary text-primary-foreground font-bold text-lg flex items-center justify-center shadow-salon">
-                {s.n}
-              </div>
-              <h3 className="mt-3 font-bold">{s.t}</h3>
-              <p className="text-sm text-muted-foreground">{s.d}</p>
-            </div>
-          ))}
         </div>
       </div>
     </section>
   );
 }
 
-function AntesDepois() {
+function Footer({ channelUrl }: { channelUrl: string }) {
   return (
-    <section className="max-w-3xl mx-auto py-12">
-      <div className="text-center mb-2 px-4">
-        <h2 className="text-2xl sm:text-3xl font-bold">Veja a transformação</h2>
-        <p className="text-sm text-muted-foreground">Arraste o controle para comparar</p>
-      </div>
-      <BeforeAfterGallery servico="Sofá" />
-    </section>
-  );
-}
-
-function Depoimentos() {
-  const reviews = [
-    {
-      n: "Marina S.",
-      bairro: "Nova Granja",
-      t: "Ficou impecável!",
-      d: "Sofá de tecido claro com manchas antigas. Voltou parecendo novo. Equipe pontual e educada.",
-    },
-    {
-      n: "Carlos R.",
-      bairro: "Morro Alto",
-      t: "Recomendo demais",
-      d: "Higienização interna do carro perfeita. Tirou cheiro de cigarro do dono anterior.",
-    },
-    {
-      n: "Júlia M.",
-      bairro: "Vespasiano",
-      t: "Atendimento 10",
-      d: "Marcaram para o mesmo dia. Colchão do bebê limpo e seguro. Já contratei de novo.",
-    },
-  ];
-  return (
-    <section className="max-w-6xl mx-auto px-4 py-12">
-      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8">O que dizem nossos clientes</h2>
-      <div className="grid md:grid-cols-3 gap-4">
-        {reviews.map((r) => (
-          <div key={r.n} className="rounded-2xl border border-border bg-card p-5">
-            <div className="flex items-center gap-1 mb-2">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <Star key={i} className="h-4 w-4 fill-warning text-warning" />
-              ))}
-            </div>
-            <p className="font-bold">{r.t}</p>
-            <p className="text-sm text-muted-foreground mt-1">"{r.d}"</p>
-            <p className="text-xs text-muted-foreground mt-3">
-              — {r.n}, {r.bairro}
-            </p>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function FaqSection() {
-  return (
-    <section className="bg-card/40 border-y border-border">
-      <div className="max-w-3xl mx-auto px-4 py-12">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6">Perguntas frequentes</h2>
-        <Accordion type="single" collapsible className="space-y-2">
-          {FAQ.map((f, i) => (
-            <AccordionItem
-              key={i}
-              value={`q${i}`}
-              className="bg-background rounded-xl border border-border px-4"
-            >
-              <AccordionTrigger className="text-left font-semibold">{f.q}</AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground">{f.a}</AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
-    </section>
-  );
-}
-
-function CtaFinal() {
-  return (
-    <section className="max-w-6xl mx-auto px-4 py-14">
-      <div className="rounded-3xl gradient-primary text-primary-foreground p-8 sm:p-12 text-center shadow-salon-lg">
-        <h2 className="text-2xl sm:text-4xl font-extrabold">
-          Pronto para deixar tudo como novo?
-        </h2>
-        <p className="mt-2 opacity-90 text-sm sm:text-base">
-          Solicite seu orçamento agora — sem compromisso, resposta em 15 minutos.
+    <footer className="border-t border-white/10">
+      <div className="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-white/60">
+        <p className="font-bold text-white">Auto Limpeza Pro</p>
+        <p className="mt-1">
+          Higienização profissional • São José da Lapa, Vespasiano e região
         </p>
-        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-          <a
-            href="#orcamento"
-            onClick={(e) => {
-              e.preventDefault();
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-            className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-white text-primary font-bold"
-          >
-            Pedir orçamento <ArrowRight className="h-4 w-4" />
+        <p className="mt-3">
+          <Link to="/" className="underline hover:text-white">Início</Link> ·{" "}
+          <Link to="/servicos" className="underline hover:text-white">Serviços</Link> ·{" "}
+          <Link to="/sobre" className="underline hover:text-white">Sobre</Link> ·{" "}
+          <Link to="/contato" className="underline hover:text-white">Contato</Link> ·{" "}
+          <Link to="/blog" className="underline hover:text-white">Blog</Link> ·{" "}
+          <a href={channelUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-white">
+            YouTube
           </a>
-          <a
-            href="https://wa.me/5531980252882?text=Ol%C3%A1,%20quero%20um%20or%C3%A7amento."
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-success text-success-foreground font-bold"
-          >
-            <MessageCircle className="h-4 w-4" /> WhatsApp
-          </a>
-          <a
-            href="tel:+5531980252882"
-            className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-white/15 backdrop-blur text-primary-foreground border border-white/30 font-bold"
-          >
-            <Phone className="h-4 w-4" /> Ligar
-          </a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="border-t border-border">
-      <div className="max-w-6xl mx-auto px-4 py-8 text-center text-xs text-muted-foreground">
-        <p className="font-semibold text-foreground">Auto Limpeza Pro</p>
-        <p className="mt-1">Higienização profissional • São José da Lapa, Vespasiano e região</p>
-        <p className="mt-2">
-          <Link to="/" className="underline">Início</Link> ·{" "}
-          <Link to="/servicos" className="underline">Serviços</Link> ·{" "}
-          <Link to="/sobre" className="underline">Sobre</Link> ·{" "}
-          <Link to="/contato" className="underline">Contato</Link> ·{" "}
-          <Link to="/blog" className="underline">Blog</Link>
         </p>
       </div>
     </footer>
