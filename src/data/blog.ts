@@ -1,6 +1,7 @@
 import { CIDADES, type Cidade } from "./locations";
 import { SERVICOS, type Servico } from "./servicos";
 import { MANUAIS_EXTRAS } from "./blogExtras";
+import { DICAS_50 } from "./blogDicas";
 
 export type PostTipo = "A" | "B" | "C" | "manual";
 
@@ -423,7 +424,7 @@ function gerarPosts(): Post[] {
   return out;
 }
 
-export const POSTS: Post[] = [...MANUAIS, ...gerarPosts()];
+export const POSTS: Post[] = [...DICAS_50, ...MANUAIS, ...MANUAIS_EXTRAS, ...gerarPosts()];
 
 export function findPost(slug: string) {
   return POSTS.find((p) => p.slug === slug);
